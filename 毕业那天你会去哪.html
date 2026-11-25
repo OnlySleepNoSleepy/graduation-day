@@ -1,0 +1,4179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>毕业那天你会去哪</title>
+<style>
+  :root{
+    --paper:#f8f2e6;
+    --paper2:#fdfaf3;
+    --ink:#2b2621;
+    --ink2:#6e6458;
+    --ink3:#9a9084;
+    --red:#9c3b30;
+    --green:#4c6b58;
+    --line:rgba(43,38,33,.14);
+    --serif:"Songti SC","SimSun","STSong",serif;
+    --kai:"Kaiti SC","KaiTi","STKaiti","SimSun",serif;
+    --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Noto Sans SC",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{height:100%}
+  body{
+    margin:0;min-height:100%;
+    background:radial-gradient(120% 90% at 50% -10%,#f1eadd 0%,#e7dece 45%,#ded4c1 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    display:flex;justify-content:center;
+    padding:28px 16px 64px;
+  }
+  /* ---------- 四季背景 ---------- */
+  body{transition:background .9s ease}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(45% 34% at 10% 6%,var(--glow1,transparent) 0%,transparent 62%),
+      radial-gradient(55% 44% at 92% 94%,var(--glow2,transparent) 0%,transparent 68%);
+  }
+  body[data-season="autumn"]{
+    --paper:#f7efdf;--paper2:#fdf8ee;--ink2:#6b5f4e;--ink3:#9b8e79;--red:#a34228;
+    --glow1:rgba(216,158,66,.28);--glow2:rgba(170,112,44,.20);--wash:rgba(214,168,80,.11);
+    background:linear-gradient(165deg,#f5ecd8 0%,#eddfc4 46%,#e2cda4 100%);
+  }
+  body[data-season="winter"]{
+    --paper:#eef1f4;--paper2:#fbfcfe;--ink:#242a31;--ink2:#5f6b78;--ink3:#8e9aa6;--red:#8c4550;
+    --glow1:rgba(120,150,180,.24);--glow2:rgba(90,120,150,.18);--wash:rgba(140,170,200,.12);
+    background:linear-gradient(165deg,#e7ecf1 0%,#d8e0e7 46%,#c7d2dc 100%);
+  }
+  body[data-season="spring"]{
+    --paper:#f2f5e9;--paper2:#fbfdf5;--ink:#25301f;--ink2:#5c6a4e;--ink3:#8e9a80;--red:#a05a63;
+    --glow1:rgba(150,190,120,.26);--glow2:rgba(212,150,172,.16);--wash:rgba(160,200,130,.12);
+    background:linear-gradient(165deg,#eaf1df 0%,#dce8cc 46%,#cadbbb 100%);
+  }
+  body[data-season="summer"]{
+    --paper:#f0f6f4;--paper2:#fbfefd;--ink:#1f2e2c;--ink2:#4f6563;--ink3:#849a97;--red:#9a4a38;
+    --glow1:rgba(90,175,165,.24);--glow2:rgba(240,190,90,.18);--wash:rgba(110,190,180,.12);
+    background:linear-gradient(165deg,#e8f2ef 0%,#d5e7e2 46%,#c3dbd5 100%);
+  }
+  .shell{transition:background .9s ease,box-shadow .9s ease}
+  .shell::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(70% 45% at 100% 0%,var(--wash,transparent) 0%,transparent 72%),
+      radial-gradient(52% 36% at 0% 100%,var(--wash,transparent) 0%,transparent 70%);
+  }
+  #app{width:100%;max-width:660px;position:relative;z-index:1}
+
+  .shell{
+    position:relative;
+    background:var(--paper2);
+    border-radius:3px;
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 18px 50px rgba(50,40,25,.14),0 2px 6px rgba(50,40,25,.08);
+    padding:26px 30px 34px;
+    min-height:70vh;
+    overflow:hidden;
+  }
+  .shell::before{
+    content:"";position:absolute;left:52px;top:0;bottom:0;width:1px;
+    background:rgba(156,59,48,.16);
+  }
+  .shell::after{
+    content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;
+    background:radial-gradient(circle at 70% 30%,rgba(198,178,140,.18),transparent 70%);
+    pointer-events:none;
+  }
+
+  /* ---------- HUD ---------- */
+  .hud{padding:0 0 14px;border-bottom:1px dashed var(--line);margin-bottom:22px}
+  .hud-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sem{font-family:var(--kai);font-size:19px;letter-spacing:2px;color:var(--red)}
+  .dots{display:flex;gap:5px;margin-left:auto}
+  .dots i{width:6px;height:6px;border-radius:50%;background:rgba(43,38,33,.16);display:block}
+  .dots i.done{background:rgba(156,59,48,.55)}
+  .dots i.now{background:var(--red);box-shadow:0 0 0 3px rgba(156,59,48,.15)}
+  .bgm{font-size:15px;color:var(--ink3);cursor:pointer;padding:0 6px;user-select:none;line-height:1}
+  .bgm:hover{color:var(--red)}
+  .dir{font-size:11px;padding:2px 7px;border-radius:2px;letter-spacing:1px}
+  .dir-k{background:rgba(156,59,48,.1);color:var(--red)}
+  .dir-g{background:rgba(76,107,88,.12);color:var(--green)}
+  .dir-j{background:rgba(90,90,120,.12);color:#5a5a78}
+  .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{
+    font-size:11.5px;color:var(--ink3);letter-spacing:.5px;
+    background:rgba(43,38,33,.04);padding:3px 8px;border-radius:2px;
+    display:inline-flex;gap:4px;align-items:baseline;
+  }
+  .chip b{color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+
+  /* ---------- 正文 ---------- */
+  .prose{font-family:var(--kai);font-size:17px;line-height:2;color:var(--ink);letter-spacing:.3px}
+  .prose p{margin:0 0 15px}
+  .prose p:last-child{margin-bottom:0}
+
+  .scene-title{
+    font-family:var(--sans);font-size:12px;letter-spacing:3px;color:var(--ink3);
+    margin-bottom:16px;text-transform:uppercase;
+  }
+  .scene-title::after{content:"";display:block;width:28px;height:1px;background:var(--red);margin-top:8px;opacity:.6}
+
+  .choices{margin-top:26px;display:flex;flex-direction:column;gap:9px}
+  .choice{
+    appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.45);
+    font-family:var(--sans);font-size:14.5px;line-height:1.6;color:var(--ink);
+    text-align:left;padding:13px 16px;border-radius:2px;cursor:pointer;
+    transition:background .18s,color .18s,border-color .18s,transform .12s;
+  }
+  .choice:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:translateX(3px)}
+  .choice:active{transform:translateX(1px) scale(.995)}
+
+  .deltas,.last-action{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 0}
+  .delta{font-size:11.5px;padding:3px 8px;border-radius:2px;font-variant-numeric:tabular-nums}
+  .delta.up{background:rgba(76,107,88,.12);color:var(--green)}
+  .delta.down{background:rgba(156,59,48,.1);color:var(--red)}
+  .last-action{margin:0 0 18px;font-size:12px;color:var(--ink3);align-items:center}
+
+  .btn{
+    appearance:none;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    font-family:var(--sans);font-size:14px;letter-spacing:2px;padding:12px 26px;
+    border-radius:2px;cursor:pointer;margin-top:26px;transition:background .18s,color .18s;
+    display:block;width:100%;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.primary:hover{background:var(--red);border-color:var(--red)}
+  .btn.ghost{border-color:var(--line);color:var(--ink2);margin-top:10px;font-size:13px}
+  .btn.ghost:hover{background:rgba(43,38,33,.06);color:var(--ink)}
+
+  .left-hint{font-size:12.5px;color:var(--ink3);margin:14px 0 0;letter-spacing:.5px}
+  .left-hint b{color:var(--red);font-size:15px}
+  .acts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+  .act{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:12px 15px;border-radius:2px;cursor:pointer;display:flex;flex-direction:column;gap:3px;
+    transition:background .18s,border-color .18s,transform .12s;
+  }
+  .act:hover{background:rgba(43,38,33,.05);border-color:rgba(43,38,33,.3);transform:translateX(3px)}
+  .a-name{font-size:14.5px;color:var(--ink);letter-spacing:.8px}
+  .a-note{font-size:11.5px;color:var(--ink3)}
+  .warn{font-family:var(--sans);font-size:13px;color:var(--red);background:rgba(156,59,48,.06);
+    padding:9px 12px;border-left:2px solid var(--red);margin:18px 0 0}
+  .note{font-family:var(--sans);font-size:13px;color:var(--ink2);background:rgba(43,38,33,.035);
+    padding:9px 12px;border-left:2px solid rgba(43,38,33,.18);margin:10px 0 0;line-height:1.7}
+
+  /* ---------- 翻页与月度小结 ---------- */
+  .shell{transform-origin:left center;backface-visibility:hidden}
+  .shell.flip{animation:pageflip .62s cubic-bezier(.2,.85,.25,1)}
+  @keyframes pageflip{
+    0%{transform:perspective(1400px) rotateY(-14deg) translateX(-8px);opacity:.25;
+       box-shadow:26px 0 40px rgba(50,40,25,.28)}
+    55%{transform:perspective(1400px) rotateY(2deg);opacity:1}
+    100%{transform:none;opacity:1}
+  }
+  .summary{padding-top:14px}
+  .sum-tag{font-size:11px;letter-spacing:3px;color:var(--red);opacity:.85;margin-bottom:14px}
+  .sum-title{font-family:var(--serif);font-size:24px;letter-spacing:3px;margin:0 0 20px;font-weight:600}
+  .sum-block{margin-bottom:16px}
+  .sum-lb{font-size:11px;letter-spacing:2px;color:var(--ink3);display:block;margin-bottom:7px}
+  .sum-acts,.sum-lines{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+  .sum-acts li{font-family:var(--kai);font-size:15px;color:var(--ink);padding-left:14px;position:relative}
+  .sum-acts li::before{content:"";position:absolute;left:2px;top:.72em;width:5px;height:1px;background:var(--ink3)}
+  .sum-acts li.none{color:var(--ink3)}
+  .sum-lines li{font-size:12.5px;color:var(--ink2);line-height:1.7;padding-left:10px;
+    border-left:2px solid rgba(156,59,48,.25);margin-left:2px}
+  .sum-stats{font-size:11.5px;color:var(--ink3);letter-spacing:1px;
+    border-top:1px dashed var(--line);padding-top:12px;margin-top:6px}
+
+  /* ---------- 主界面：人物 + 右列 ---------- */
+  .game{display:flex;gap:20px;align-items:flex-start;margin-top:6px}
+  .stage{flex:0 0 218px;display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:4px}
+  .avatar{width:190px;height:auto;display:block}
+  .g-date{font-family:var(--kai);font-size:15px;letter-spacing:2px;color:var(--ink2)}
+  .g-crumb{font-size:11.5px;color:var(--ink3);letter-spacing:1px;text-align:center;min-height:16px;line-height:1.5}
+  .g-energy{width:150px;height:5px;background:rgba(43,38,33,.08);border-radius:3px;overflow:hidden;margin-top:6px}
+  .g-energy i{display:block;height:100%;background:var(--green);transition:width .35s}
+  .g-state{font-size:10.5px;color:var(--ink3);letter-spacing:1.5px}
+  .rail{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .rbtn{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:9px 12px;border-radius:2px;cursor:pointer;display:flex;gap:9px;align-items:center;
+    width:100%;transition:background .18s,border-color .18s,transform .12s;
+  }
+  .rbtn:hover{background:rgba(43,38,33,.05);border-color:rgba(43,38,33,.28);transform:translateX(2px)}
+  .r-ico{font-size:16px;width:20px;text-align:center;flex:0 0 20px}
+  .r-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .r-txt b{font-family:var(--kai);font-size:15px;font-weight:400;color:var(--ink);letter-spacing:1px}
+  .r-txt i{font-style:normal;font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rbtn.go{background:var(--ink);border-color:var(--ink);justify-content:center;margin-top:8px}
+  .rbtn.go b{color:var(--paper)}
+  .rbtn.go i{color:rgba(253,250,243,.6)}
+  .prose.small{font-size:14.5px;line-height:1.9}
+  .effect-text{font-family:var(--kai);font-size:15px;line-height:1.95;color:var(--ink);letter-spacing:.2px;margin:2px 0 0}
+  .effect-text p{margin:0 0 8px}
+  .effect-text p:last-child{margin-bottom:0}
+  .rail .back{text-align:left;margin-bottom:2px}
+  .rbtn.attend{border-color:rgba(76,107,88,.4);background:rgba(76,107,88,.05)}
+  .rbtn.attend.done{opacity:.55;background:transparent;border-color:var(--line)}
+  .rbtn.attend.done b{color:var(--ink3)}
+  .empty{font-size:12px;color:var(--ink3);padding:14px 0;line-height:1.8}
+  .mask{position:fixed;inset:0;background:rgba(30,26,22,.42);display:flex;align-items:center;
+    justify-content:center;z-index:99;padding:20px}
+  .dialog{background:var(--paper2);border-radius:3px;padding:24px 22px 18px;max-width:340px;width:100%;
+    box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .dialog p{font-family:var(--sans);font-size:13.5px;line-height:1.9;color:var(--ink);margin:0 0 18px}
+  .dialog p b{color:var(--red);font-size:16px}
+  .dbtns{display:flex;gap:9px}
+  .dbtns button{
+    appearance:none;flex:1;padding:10px 0;border-radius:2px;cursor:pointer;
+    font-family:var(--sans);font-size:13px;letter-spacing:1px;border:1px solid var(--line);
+    background:transparent;color:var(--ink2);
+  }
+  .dbtns .dyes{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .dbtns .dyes:hover{background:var(--red);border-color:var(--red)}
+
+  /* ---------- 封面 ---------- */
+  .cover{min-height:calc(70vh - 70px);display:flex;flex-direction:column;justify-content:center;padding:10px 0}
+  .kicker{font-size:11.5px;letter-spacing:4px;color:var(--ink3);margin-bottom:26px}
+  .cover h1{
+    font-family:var(--serif);font-size:44px;line-height:1.35;margin:0 0 24px;
+    letter-spacing:5px;font-weight:600;
+  }
+  .cover h1 em{font-style:normal;color:var(--red)}
+  .cover-sub{font-family:var(--kai);font-size:15.5px;line-height:2;color:var(--ink2);margin:0 0 34px}
+  .tiny{font-size:11px;color:var(--ink3);line-height:1.8;margin:22px 0 0;letter-spacing:.5px}
+
+  /* ---------- 开局 ---------- */
+  .setup{padding-top:10px}
+  .q{font-family:var(--kai);font-size:20px;font-weight:400;letter-spacing:2px;margin:28px 0 14px;color:var(--ink)}
+  .q:first-of-type{margin-top:6px}
+  .name-input{
+    width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);
+    font-family:var(--kai);font-size:26px;color:var(--ink);padding:6px 2px 10px;outline:none;
+    letter-spacing:4px;
+  }
+  .name-input:focus{border-color:var(--red)}
+  .name-input::placeholder{color:rgba(43,38,33,.2)}
+  .majors{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .colleges{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .col{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:13px;border-radius:2px;cursor:pointer;display:flex;flex-direction:column;gap:4px;
+    transition:background .18s,border-color .18s,transform .12s;
+  }
+  .col:hover{background:rgba(43,38,33,.04);border-color:rgba(43,38,33,.3);transform:translateX(2px)}
+  .back{
+    appearance:none;border:none;background:transparent;color:var(--ink3);
+    font-family:var(--sans);font-size:12px;letter-spacing:1px;cursor:pointer;
+    padding:0;margin:0 0 12px;
+  }
+  .back:hover{color:var(--red)}
+  .opts{display:flex;flex-wrap:wrap;gap:7px}
+  .opts.yr{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .opts.yr .opt{padding:7px 4px;align-items:center}
+  .opts.yr .o-main{font-size:13px;letter-spacing:0}
+  .opts.yr .o-note{font-size:9.5px}
+  .opt{
+    appearance:none;border:1px solid var(--line);background:transparent;
+    font-family:var(--sans);font-size:13px;color:var(--ink);cursor:pointer;
+    padding:8px 13px;border-radius:2px;display:flex;flex-direction:column;gap:2px;
+    align-items:flex-start;transition:background .18s,border-color .18s;
+  }
+  .opt:hover{background:rgba(43,38,33,.04)}
+  .opt.on{background:rgba(156,59,48,.07);border-color:var(--red)}
+  .o-note{font-size:10px;color:var(--ink3);letter-spacing:.3px}
+  .opt.on .o-note{color:var(--red);opacity:.85}
+  .hint{font-size:11.5px;color:var(--ink3);margin:9px 0 0;letter-spacing:.3px}
+  .provs{margin-top:2px}
+  .rgroup{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+  .rname{flex:0 0 42px;font-size:10.5px;color:var(--ink3);letter-spacing:1px;padding-top:7px}
+  .pgrid{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+  .prov{
+    appearance:none;border:1px solid var(--line);background:transparent;
+    font-family:var(--sans);font-size:12px;color:var(--ink);
+    padding:5px 9px;border-radius:2px;cursor:pointer;transition:background .15s,border-color .15s;
+  }
+  .prov:hover{background:rgba(43,38,33,.05)}
+  .prov.on{background:rgba(156,59,48,.08);border-color:var(--red);color:var(--red)}
+  .allow-row{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+  .allow-yen{font-family:var(--kai);font-size:20px;color:var(--ink3)}
+  .allow-input{
+    width:170px;background:transparent;border:none;border-bottom:1px solid var(--line);
+    font-family:var(--kai);font-size:22px;color:var(--ink);padding:4px 2px 6px;outline:none;
+  }
+  .allow-input:focus{border-color:var(--red)}
+  .allow-unit{font-size:12px;color:var(--ink3)}
+  .wins{display:flex;flex-direction:column;gap:9px;margin-top:16px}  .win{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:14px 16px;border-radius:2px;cursor:pointer;display:flex;gap:14px;align-items:center;
+    transition:background .18s,border-color .18s,transform .12s;
+  }
+  .win:hover{background:rgba(43,38,33,.04);border-color:rgba(43,38,33,.3);transform:translateX(3px)}
+  .w-ico{font-size:23px;line-height:1;width:28px;text-align:center}
+  .w-body{display:flex;flex-direction:column;gap:3px;flex:1}
+  .w-name{font-family:var(--kai);font-size:17px;color:var(--ink);letter-spacing:1px}
+  .w-desc{font-size:11.5px;color:var(--ink3)}
+  .w-n{font-size:10.5px;color:var(--ink3);border:1px solid var(--line);border-radius:2px;padding:2px 6px}
+  .places{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+  .place{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:13px 15px;border-radius:2px;cursor:pointer;display:flex;flex-direction:column;gap:4px;
+    transition:background .18s,border-color .18s,transform .12s;
+  }
+  .place:hover{background:rgba(43,38,33,.04);border-color:rgba(43,38,33,.3);transform:translateX(3px)}
+  .p-name{font-family:var(--kai);font-size:16px;color:var(--ink);letter-spacing:1px}
+  .p-note{font-size:11px;color:var(--ink3)}
+  .p-n{font-size:10px;color:var(--ink3);opacity:.8}
+  .major.off{opacity:.4;cursor:not-allowed}
+  .major.off:hover{background:transparent}
+  .m-note{font-size:10.5px;color:var(--red);margin-top:3px;opacity:.9}
+  .btn:disabled{opacity:.3;cursor:not-allowed}
+  .btn:disabled:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .major{
+    appearance:none;border:1px solid var(--line);background:transparent;text-align:left;
+    padding:12px 13px;border-radius:2px;cursor:pointer;display:flex;flex-direction:column;gap:4px;
+    transition:background .18s,border-color .18s;
+  }
+  .major:hover{background:rgba(43,38,33,.04)}
+  .major.on{background:rgba(156,59,48,.06);border-color:var(--red)}
+  .m-tag{font-size:10px;letter-spacing:2px;color:var(--ink3)}
+  .m-name{font-family:var(--kai);font-size:16px;color:var(--ink)}
+  .m-col{font-size:10.5px;color:var(--ink3)}
+  .m-line{font-size:10.5px;color:var(--ink2);line-height:1.55;margin-top:3px;opacity:.85}
+
+  /* ---------- 结局 ---------- */
+  .end{padding-top:6px}
+  .cert{
+    position:relative;border:1px solid rgba(156,59,48,.35);background:rgba(255,255,255,.32);
+    padding:26px 24px;margin-bottom:30px;border-radius:2px;
+  }
+  .cert::before{
+    content:"";position:absolute;inset:5px;border:1px solid rgba(156,59,48,.16);pointer-events:none;
+  }
+  .cert-head{font-size:10.5px;letter-spacing:5px;color:var(--red);margin-bottom:18px;opacity:.9}
+  .cert-name{font-family:var(--serif);font-size:34px;letter-spacing:8px;margin-bottom:6px}
+  .cert-major{font-size:12px;color:var(--ink2);letter-spacing:1px;margin-bottom:18px}
+  .cert-dest{font-family:var(--kai);font-size:16px;color:var(--ink);letter-spacing:1.5px}
+  .seal{
+    position:absolute;right:22px;bottom:20px;width:62px;height:62px;
+    border:2px solid var(--red);color:var(--red);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-size:28px;opacity:.82;transform:rotate(-7deg);
+  }
+  .end-title{font-family:var(--serif);font-size:30px;letter-spacing:5px;margin:0 0 24px;font-weight:600}
+  blockquote.line{
+    margin:28px 0;padding:14px 0 14px 18px;border-left:2px solid rgba(156,59,48,.4);
+    font-family:var(--kai);font-size:15px;color:var(--ink2);letter-spacing:1px;
+  }
+  .rom{
+    font-family:var(--kai);font-size:14.5px;line-height:1.9;color:var(--ink2);
+    border-left:2px solid rgba(156,59,48,.22);padding-left:14px;margin:22px 0 0;
+  }
+  .review,.report{margin-top:34px;padding-top:22px;border-top:1px dashed var(--line)}
+  .review h3,.report h3{
+    font-family:var(--sans);font-size:11.5px;letter-spacing:3px;color:var(--ink3);
+    font-weight:400;margin:0 0 14px;
+  }
+  .review ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+  .review li{font-family:var(--kai);font-size:14px;color:var(--ink2);line-height:1.7;padding-left:2px}
+  .hl-ch{font-family:var(--sans);font-size:10.5px;color:var(--red);letter-spacing:1px;margin-right:9px;opacity:.8}
+
+  @media (max-width:560px){
+    body{padding:0}
+    #app{max-width:none}
+    .shell{border-radius:0;min-height:100vh;padding:20px 20px 44px}
+    .shell::before{left:14px;opacity:.5}
+    .cover h1{font-size:34px;letter-spacing:3px}
+    .prose{font-size:16.5px;line-height:1.95}
+    .majors{grid-template-columns:1fr}
+    .colleges{grid-template-columns:1fr}
+    .game{flex-direction:column;gap:12px}
+    .stage{flex:0 0 auto;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px;justify-content:flex-start}
+    .avatar{width:84px}
+    .g-date{font-size:13px;letter-spacing:1px}
+    .g-energy{width:96px;margin-top:0}
+    .g-crumb{text-align:left;min-height:0;width:100%}
+    .rail{width:100%}
+    .rbtn{padding:10px 12px}
+    .cert-name{font-size:28px;letter-spacing:5px}
+    .end-title{font-size:25px}
+    .seal{width:54px;height:54px;font-size:24px}
+  }
+  /* ---------- 四季加强 ---------- */
+  body[data-season="autumn"]{--accent:#b0792c;--wash:rgba(206,158,74,.17)}
+  body[data-season="winter"]{--accent:#5b7891;--wash:rgba(130,160,190,.20)}
+  body[data-season="spring"]{--accent:#6c8f50;--wash:rgba(150,192,120,.20)}
+  body[data-season="summer"]{--accent:#3b7f77;--wash:rgba(100,182,172,.20)}
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:repeating-linear-gradient(45deg,rgba(60,50,35,.014) 0 1px,transparent 1px 3px);
+  }
+  .shell{
+    border-top:3px solid var(--accent,rgba(0,0,0,.06));
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset,
+      inset 0 90px 70px -60px var(--wash,transparent),
+      0 18px 50px rgba(50,40,25,.14),0 2px 6px rgba(50,40,25,.08);
+  }
+  .shell::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(72% 46% at 100% 0%,var(--wash,transparent) 0%,transparent 70%),
+      radial-gradient(54% 38% at 0% 100%,var(--wash,transparent) 0%,transparent 68%),
+      linear-gradient(180deg,var(--wash,transparent) 0%,transparent 16%);
+  }
+  .sem{color:var(--accent,#2b2621);transition:color .9s ease}
+  .scene-art{
+    margin:0 0 12px;border-radius:2px;overflow:hidden;line-height:0;
+    box-shadow:0 2px 10px rgba(50,40,25,.10);
+  }
+  .scene-art svg{display:block;width:100%;height:auto}
+  .scene-sum{
+    font-family:var(--sans);font-size:11.5px;letter-spacing:1.5px;color:var(--ink3);
+    margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .def-score{
+    display:flex;align-items:baseline;gap:14px;margin:8px 0 22px;
+    padding:16px 18px;background:var(--paper);border:1px solid var(--line);
+    border-left:3px solid var(--accent,#b0792c);
+  }
+  .def-score span{font-size:12.5px;color:var(--ink3);letter-spacing:2px}
+  .def-score b{font-family:var(--serif);font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  .def-score b.bad{color:#a34228}
+  .def-score b.good{color:#4c6b58}
+  .def-verdict{margin-left:auto;font-size:14px;letter-spacing:2px;color:var(--ink2)}
+  .def-verdict.bad{color:#a34228;font-weight:600}
+  .def-verdict.good{color:#4c6b58;font-weight:600}
+  .ledger{font-size:12.5px;color:var(--ink3);letter-spacing:.5px;margin:14px 0 0}
+  .exam-paper{
+    margin:4px 0 16px;padding:14px 16px;background:var(--paper);
+    border:1px solid var(--line);border-left:3px solid var(--accent,#b0792c);
+  }
+  .ex-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .ex-row:last-child{border-bottom:0}
+  .ex-name{flex:0 0 40%;font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ex-bar{flex:1;height:5px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden}
+  .ex-bar i{display:block;height:100%;background:var(--accent,#b0792c);opacity:.75}
+  .ex-score{flex:0 0 30px;text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .ex-grade{flex:0 0 52px;text-align:right;font-size:12.5px;color:var(--ink2)}
+  .ex-grade.bad{color:#a34228;font-weight:600}
+  .ex-rank{font-size:13px;color:var(--ink2);margin:0 0 18px}
+  .ex-rank b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .month-line{
+    font-family:var(--kai);font-size:13.5px;line-height:1.9;color:var(--ink2);
+    margin:14px 0 0;padding-left:11px;border-left:2px solid var(--accent,#cfc6b6);
+    opacity:.92;
+  }
+  @media (max-width:520px){ .shell{border-top:2px solid var(--accent,rgba(0,0,0,.06))} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD = g.GD || {};
+
+  /* ================= 学校 ================= */
+  /* 校名虚构，其余设定照《成都大学资料.md》。改这一行即可换成真实校名 */
+  GD.SCHOOL = { name: '蓉城大学', short: '蓉大', short2: '蓉大站' };
+
+  /* ================= 入学年份 / 性别 / 生源地 / 生活费 ================= */
+  GD.YEARS = [2022, 2023, 2024, 2025, 2026];
+
+  GD.GENDERS = [
+    { k: 'm', name: '男' },
+    { k: 'f', name: '女' },
+    { k: 'x', name: '不说' }
+  ];
+  GD.PARTNER = { m: '她', f: '他', x: 'TA' };
+
+  GD.HOMES = [
+    { k: 'cd', name: '成都本地', short: '成都', note: '周末能回家吃饭', mood: 5, network: 5 },
+    { k: 'sc', name: '四川其他市州', short: '四川', note: '动车一两个小时', mood: 2, network: 2 },
+    { k: 'cq', name: '重庆', short: '重庆', note: '高铁一小时二十分钟', mood: 0, network: 0 },
+    { k: 'xn', name: '云贵陕甘', short: '西南西北', note: '一整天都在路上', mood: -3, network: -1 },
+    { k: 'hd', name: '华东华中', short: '华东华中', note: '飞三个小时，还要转地铁', mood: -6, network: -2 }
+  ];
+
+  /* 全国 34 个省级行政区，按大区分组；far = 离成都的远近（0 最近，3 最远） */
+  GD.REGIONS = [
+    { k: 'xinan', name: '西南' },
+    { k: 'huazhong', name: '华中' },
+    { k: 'xibei', name: '西北' },
+    { k: 'huanan', name: '华南' },
+    { k: 'huadong', name: '华东' },
+    { k: 'huabei', name: '华北' },
+    { k: 'dongbei', name: '东北' },
+    { k: 'gangao', name: '港澳台' }
+  ];
+
+  /* [key, 省名, 大区, far, 饮食, 口音, 老乡] */
+  GD.PROVINCES = [
+    ['sc', '四川', 'xinan', 0, '火锅和串串', '四川话，尾音往上扬', '一坐下就开始摆龙门阵'],
+    ['cq', '重庆', 'xinan', 1, '小面和江湖菜', '重庆话，嗓门大、语气硬', 'AA 制算得比谁都清楚'],
+    ['gz', '贵州', 'xinan', 1, '酸汤鱼', '贵州话，句尾带个“嘛”', '带了自家腌的糟辣椒'],
+    ['yn', '云南', 'xinan', 1, '过桥米线和菌子', '云南话，语速慢', '聊哪个山头出的菌子好'],
+    ['xz', '西藏', 'xinan', 2, '酥油茶和糌粑', '藏语腔的普通话', '人不多，见了都像亲戚'],
+
+    ['hn', '河南', 'huazhong', 2, '烩面和胡辣汤', '河南话，四声重', '一开口就是“中”'],
+    ['hb', '湖北', 'huazhong', 2, '热干面', '湖北话，语速快', '先争论哪家热干面正宗'],
+    ['hh', '湖南', 'huazhong', 2, '米粉和剁椒', '湖南话，句尾带“咯”', '吃得满桌都是辣椒'],
+
+    ['sx', '陕西', 'xibei', 1, '肉夹馍和凉皮', '陕西话，咬字重', '聊哪家泡馍地道'],
+    ['gs', '甘肃', 'xibei', 1, '牛肉面', '甘肃话，尾音拖长', '纠正你“是牛肉面，不是拉面”'],
+    ['qh', '青海', 'xibei', 2, '手抓羊肉', '青海话，声调平', '人少，但都熟'],
+    ['nx', '宁夏', 'xibei', 2, '手抓羊肉和羊杂', '宁夏话', '带了枸杞和八宝茶'],
+    ['xj', '新疆', 'xibei', 3, '大盘鸡和馕', '新疆腔的普通话', '一来就是一桌人'],
+
+    ['gd', '广东', 'huanan', 2, '早茶和肠粉', '粤语腔的普通话', '第一句是“饮咗茶未”'],
+    ['gx', '广西', 'huanan', 2, '螺蛳粉', '广西口音，尾音软', '为螺蛳粉正名'],
+    ['hi', '海南', 'huanan', 3, '清补凉和文昌鸡', '海南口音，尾音上扬', '一开口就聊台风'],
+
+    ['js', '江苏', 'huadong', 3, '小笼包和盐水鸭', '苏南苏北口音不一样', '分两桌坐'],
+    ['zj', '浙江', 'huadong', 3, '片儿川和海鲜', '浙江口音，软', '算账算得很清楚'],
+    ['sh', '上海', 'huadong', 3, '生煎和本帮菜', '上海话，一口“侬”', '讲规矩，先约时间'],
+    ['ah', '安徽', 'huadong', 2, '臭鳜鱼和板面', '安徽口音，南北不同', '带来家里腌的咸货'],
+    ['fj', '福建', 'huadong', 2, '沙县和海蛎煎', '闽南口音，轻重音颠倒', '自带茶叶'],
+    ['jx', '江西', 'huadong', 2, '米粉和瓦罐汤', '江西口音', '人不多，但很齐'],
+    ['sd', '山东', 'huadong', 3, '煎饼卷大葱和把子肉', '山东话，实诚', '劝酒劝得很厉害'],
+
+    ['bj', '北京', 'huabei', 3, '炸酱面和卤煮', '京腔，儿化音重', '聊胡同和地铁'],
+    ['tj', '天津', 'huabei', 3, '煎饼果子和包子', '天津话，自带相声', '一开口全场都笑'],
+    ['he', '河北', 'huabei', 3, '驴肉火烧', '河北口音', '实在，不客套'],
+    ['sx2', '山西', 'huabei', 2, '刀削面和老陈醋', '山西话，声调硬', '带了一瓶醋'],
+    ['nm', '内蒙古', 'huabei', 2, '手把肉和奶茶', '内蒙古口音', '聊草原和马'],
+
+    ['ln', '辽宁', 'dongbei', 3, '锅包肉和烧烤', '东北话，尾音上扬', '嗓门最大的一桌'],
+    ['jl', '吉林', 'dongbei', 3, '冷面和锅包肉', '东北话', '一坐下就开吃'],
+    ['hlj', '黑龙江', 'dongbei', 3, '红肠和杀猪菜', '东北话，最标准那个', '最能喝'],
+
+    ['hk', '香港', 'gangao', 3, '茶餐厅和菠萝油', '港式粤语，夹英文', '说话很轻'],
+    ['mo', '澳门', 'gangao', 3, '葡挞和猪扒包', '澳门口音', '带了手信'],
+    ['tw', '台湾', 'gangao', 3, '卤肉饭和珍珠奶茶', '台湾腔，尾音软', '聊夜市和小吃']
+  ];
+
+  GD.ARRIVE = {
+    0: '动车一个半小时。你爸把箱子塞进行李架，说“到了给我发消息”——这句话他一路上说了四遍。',
+    1: '高铁两个多小时。你妈在站台上站到最后，你回头看了两次。',
+    2: '早上出发，到成都天已经黑了。你拖着箱子出站，第一口空气是湿的。',
+    3: '飞机三个小时，落地又坐了一个小时地铁。你第一次发现，成都的湿气是能闻出来的。'
+  };
+
+  GD.ALLOW_MIN = 300;
+  GD.ALLOW_MAX = 20000;
+
+  /* 离得多远，就得多花多少钱、少回几次家；本地人周末就能回 */
+  GD.FAR_TRAIT = {
+    0: { travel: 40, homeMood: 3 },
+    1: { travel: 200, homeMood: 1 },
+    2: { travel: 500, homeMood: -1 },
+    3: { travel: 900, homeMood: -2 }
+  };
+  GD.FAR_TRAIT_HINT = {
+    0: '离家最近，每学期路费约 ¥40，周末想回就回',
+    1: '离家不远，每学期路费约 ¥200',
+    2: '回家要半天，每学期路费约 ¥500',
+    3: '回家要一整天，每学期路费约 ¥900'
+  };
+
+  /* 部分专业是后来才开设的（设定值，用于“某几年还没这个专业”） */
+  GD.MAJOR_SINCE = {
+    ds: 2023, jrkj: 2024, yjjs: 2023, szmtjs: 2023, kqyx: 2024,
+    ywzj: 2023, yyjy: 2024, xxty: 2023, tsjy: 2023, szmtys: 2023,
+    xxtyhw: 2023, dshw: 2023, wlxmthw: 2023
+  };
+
+  /* ================= 各学院的核心课程（代表性的四门） ================= */
+  GD.COURSES = {
+    jx: ['高等数学', '工程制图', '理论力学', '机械原理'],
+    ee: ['电路分析', '模拟电子技术', '数字电子技术', '信号与系统'],
+    cs: ['数据结构', '计算机组成原理', '操作系统', '计算机网络'],
+    fb: ['无机化学', '有机化学', '食品化学', '微生物学'],
+    ja: ['工程力学', '结构力学', '土木工程材料', '工程测量'],
+    yx: ['系统解剖学', '生理学', '病理学', '诊断学'],
+    ph: ['药物化学', '药剂学', '药理学', '药物分析'],
+    bs: ['管理学原理', '基础会计', '微观经济学', '统计学'],
+    ly: ['旅游学概论', '旅游经济学', '酒店管理概论', '会展策划'],
+    wx: ['现代汉语', '中国古代文学', '新闻采访与写作', '传播学概论'],
+    wy: ['综合英语', '英语听力', '英美文学', '翻译基础'],
+    mx: ['马克思主义基本原理', '思想政治教育学原理', '伦理学', '政治学'],
+    fx: ['法理学', '宪法学', '民法总论', '刑法总论'],
+    ms: ['设计素描', '色彩构成', '字体设计', '版式设计'],
+    ys: ['视听语言', '动画分镜', '影视后期', '剧本创作'],
+    md: ['视唱练耳', '声乐基础', '舞蹈基本功', '中外音乐史'],
+    ty: ['运动解剖学', '运动生理学', '体育教学论', '田径'],
+    sf: ['教育学原理', '心理学基础', '课程与教学论', '教师职业道德'],
+    st: ['学术英语', '跨文化交际', '研究方法', '专业导论'],
+    hw: ['电气工程导论', '电路', '自动控制原理', '工程英语']
+  };
+
+  /* ================= 竞赛（级别 / 开放月份 / 消耗） =================
+     月份用自然月；level: 1 校级、2 省级、3 国家级
+     报名后按技能+履历算获奖概率，结果当场揭晓                    */
+  GD.COMPS = [
+    { id: 'k1', name: '校程序设计大赛', level: 1, months: [10, 11], hours: 4, energy: 30, fee: 0, need: { k: 'skill', label: '编程', req: 45 } },
+    { id: 'k2', name: '校数学建模竞赛', level: 1, months: [4, 5], hours: 4, energy: 30, fee: 0, need: { k: 'gpa', label: '数理基础', req: 55 } },
+    { id: 'k3', name: '校“挑战杯”选拔赛', level: 1, months: [11, 12], hours: 4, energy: 28, fee: 0, need: { k: 'resume', label: '项目经历', req: 30 } },
+    { id: 'k4', name: '校师范生教学技能赛', level: 1, months: [5], hours: 4, energy: 26, fee: 0, need: { k: 'network', label: '表达', req: 35 } },
+    { id: 'k5', name: '校广告艺术大赛', level: 1, months: [6], hours: 4, energy: 26, fee: 0, need: { k: 'skill', label: '设计', req: 35 } },
+    { id: 'k6', name: '校高等数学竞赛', level: 1, months: [11], hours: 4, energy: 26, fee: 0, need: { k: 'gpa', label: '数理基础', req: 45 } },
+    { id: 'k7', name: '校英语演讲比赛', level: 1, months: [10], hours: 4, energy: 24, fee: 0, need: { k: 'english', label: '英语', req: 40 } },
+    { id: 'k8', name: '校创新创业大赛', level: 1, months: [5], hours: 4, energy: 26, fee: 0, need: { k: 'resume', label: '项目经历', req: 25 } },
+    { id: 'k9', name: '校征文比赛', level: 1, months: [3], hours: 4, energy: 22, fee: 0, need: { k: 'skill', label: '写作', req: 30 } },
+    { id: 'k10', name: '校机器人大赛', level: 1, months: [11], hours: 4, energy: 26, fee: 0, need: { k: 'skill', label: '编程', req: 40 } },
+    { id: 'k11', name: '校市场调查大赛', level: 1, months: [4], hours: 4, energy: 24, fee: 0, need: { k: 'resume', label: '项目经历', req: 25 } },
+    { id: 'k12', name: '校公益项目大赛', level: 1, months: [9], hours: 4, energy: 22, fee: 0, need: { k: 'resume', label: '项目经历', req: 20 } },
+    { id: 'k13', name: '校辩论赛', level: 1, months: [12], hours: 4, energy: 24, fee: 0, need: { k: 'network', label: '表达', req: 35 } },
+    { id: 'k14', name: '校摄影大赛', level: 1, months: [5], hours: 4, energy: 20, fee: 0, need: { k: 'skill', label: '设计', req: 25 } },
+    { id: 'k15', name: '校程序设计新生赛', level: 1, months: [10], hours: 4, energy: 24, fee: 0, need: { k: 'skill', label: '编程', req: 30 } },
+
+    { id: 'p1', name: '蓝桥杯（省赛）', level: 2, months: [3, 4], hours: 6, energy: 40, fee: 60, need: { k: 'skill', label: '编程', req: 55 } },
+    { id: 'p2', name: '四川省大学生电子设计竞赛', level: 2, months: [7, 8], hours: 6, energy: 42, fee: 100, need: { k: 'skill', label: '硬件', req: 55 } },
+    { id: 'p3', name: '四川省“互联网+”选拔赛', level: 2, months: [6, 7], hours: 6, energy: 40, fee: 0, need: { k: 'resume', label: '项目经历', req: 45 } },
+
+    { id: 'g1', name: '全国大学生数学建模竞赛', level: 3, months: [9], hours: 8, energy: 55, fee: 200, need: { k: 'gpa', label: '数理基础', req: 75 } },
+    { id: 'g2', name: '中国国际大学生创新大赛', level: 3, months: [5, 6], hours: 8, energy: 55, fee: 0, need: { k: 'resume', label: '项目经历', req: 60 } },
+    { id: 'g3', name: '“挑战杯”课外学术科技作品竞赛', level: 3, months: [3, 4], hours: 8, energy: 55, fee: 0, need: { k: 'resume', label: '科研', req: 65 } },
+    { id: 'g4', name: 'CCPC 中国大学生程序设计竞赛', level: 3, months: [10, 11], hours: 8, energy: 60, fee: 300, need: { k: 'skill', label: '编程', req: 75 } },
+    { id: 'g5', name: '全国大学生电子设计竞赛', level: 3, months: [8], hours: 8, energy: 60, fee: 200, need: { k: 'skill', label: '硬件', req: 75 } },
+    { id: 'g6', name: '全国大学生广告艺术大赛', level: 3, months: [6], hours: 8, energy: 50, fee: 0, need: { k: 'skill', label: '设计', req: 65 } },
+    { id: 'g7', name: '全国大学生英语竞赛', level: 3, months: [4], hours: 4, energy: 30, fee: 50, need: { k: 'english', label: '英语', req: 65 } }
+  ];
+
+  /* ================= 学生社团（成都大学真实社团名） ================= */
+  GD.CLUBS = {
+    dianzi: { k: 'dianzi', name: '电子创意协会', tag: '技能' },
+    erp: { k: 'erp', name: 'ERP 社团', tag: '履历' },
+    feipan: { k: 'feipan', name: 'F-orange 极限飞盘协会', tag: '体魄' },
+    feiyi: { k: 'feiyi', name: '非遗协会', tag: '心情' }
+  };
+  /* 十佳社团：学年末活跃度达标就能上榜 */
+  GD.CLUB_HONOR = { need: 70, zongce: 1.5, resume: 3 };
+
+  /* 保研门槛：综测 ≥97，且校级及以上二等奖 ≥10 个 */
+  GD.BAOYAN = { zongce: 98, awards: 11 };
+
+  /* ================= 每学期课程门数（大一多、大四少） ================= */
+  GD.SEM_COURSE_COUNT = [4, 4, 4, 3, 2, 2, 1, 1];
+
+  /* 公共课按学年轮换 */
+  GD.PUBLIC = {
+    1: ['高等数学', '大学英语', '思想政治理论', '体育'],
+    2: ['大学物理', '马克思主义基本原理', '大学英语'],
+    3: ['形势与政策', '专业实习'],
+    4: ['就业指导', '毕业设计']
+  };
+
+  /* 每月总时间块（1 块 ≈ 半天）；上课占用随年级递减 */
+  GD.MONTH_SLOTS = 10;
+  GD.CLASS_SLOTS = [3, 3, 3, 3, 2, 2, 1, 1];   /* 大一上到大四下 */
+
+  /* ================= 六大学科门类 ================= */
+  GD.CATS = {
+    gong: { key: 'gong', name: '工科', bigco: '入职科技 / 制造企业', stable: '入职国企或事业单位' },
+    med: { key: 'med', name: '医学', bigco: '入职三甲医院', stable: '入职区县医院' },
+    biz: { key: 'biz', name: '经管', bigco: '入职金融机构 / 互联网公司', stable: '入职国企财务岗或银行' },
+    hum: { key: 'hum', name: '人文', bigco: '入职文化传媒机构', stable: '入职事业单位' },
+    edu: { key: 'edu', name: '师范', bigco: '入职民办学校或教育机构', stable: '考取中小学教师编制' },
+    art: { key: 'art', name: '艺术', bigco: '入职设计 / 影视公司', stable: '入职文化事业单位' }
+  };
+
+  var CAT_BOOST = {
+    gong: { skill: 5 },
+    med: { skill: 3, fitness: 2 },
+    biz: { network: 3, skill: 2 },
+    hum: { english: 5, skill: 2 },
+    edu: { mood: 5, english: 3 },
+    art: { mood: 4, network: 3 }
+  };
+
+  /* ================= 学院与专业（依据成都大学 20 个学院 / 72 个本科专业） ================= */
+  /* 每条：[key, 专业名, 标签, 一句话, 覆盖项] */
+  GD.COLLEGES = [
+    { key: 'jx', name: '机械工程学院', cat: 'gong', majors: [
+      ['jixie', '机械设计制造及其自动化', '国家级一流专业', '图纸上的每一根线，最后都要落到铁上。'],
+      ['clcx', '材料成型及控制工程', '省级一流专业', '你研究的是怎么让一块金属听话。'],
+      ['clkx', '材料科学与工程', '', '你相信改变世界的是一块新合金，不是一个 App。'],
+      ['clgc', '车辆工程', '', '龙泉驿一条街上都是车厂，你的专业就在马路对面。'],
+      ['jxdz', '机械电子工程', '', '又要懂机械又要会写代码，两头挨骂。']
+    ] },
+    { key: 'ee', name: '电子信息与电气工程学院', cat: 'gong', majors: [
+      ['zdh', '自动化', '国家级卓越工程师计划', '你学的是让机器自己动起来，代价是自己停不下来。'],
+      ['dzxx', '电子信息工程', '省级一流专业', '焊板子的时候，你第一次觉得“信号”这个词有重量。'],
+      ['txgc', '通信工程', '', '你负责让话传出去，哪怕自己一句话都不想说。'],
+      ['dqgc', '电气工程及其自动化', '', '停电的那天，整栋楼都在等你。']
+    ] },
+    { key: 'cs', name: '计算机学院', cat: 'gong', majors: [
+      ['cs', '计算机科学与技术', '国家级一流专业', '代码是你的第二语言，bug 是你的第一敌人。'],
+      ['se', '软件工程', '国家级卓越工程师计划', '你写的每一行代码，最后都会有人用，也可能都会有人骂。'],
+      ['iot', '物联网工程', '', '让冰箱联网这件事，你研究了四年。'],
+      ['ds', '数据科学与大数据技术', '', '你比本人更早知道你会挂哪门课。']
+    ] },
+    { key: 'fb', name: '食品与生物工程学院、化学化工学院', cat: 'gong', majors: [
+      ['spkx', '食品科学与工程', '国家级一流专业', '你此后四年会反复解释：食品科学不是学炒菜。'],
+      ['spaq', '食品质量与安全', '省级一流专业', '你以后看配料表的样子，会让朋友觉得扫兴。'],
+      ['swgc', '生物工程', '省级一流专业', '你在培养皿里养过东西，也在宿舍里养过自己。'],
+      ['hx', '化学', '', '手套戴久了，你会忘记自己的手长什么样。']
+    ] },
+    { key: 'ja', name: '建筑与土木工程学院、应急管理学院', cat: 'gong', majors: [
+      ['tm', '土木工程', '国家级一流专业', '你画的每一根梁，将来都要站一百年。'],
+      ['hj', '环境工程', '', '你学的这个专业，念出来就自带正确答案。'],
+      ['gcgl', '工程管理', '', '管人、管钱、管工期，你以后会非常擅长催人。'],
+      ['gczj', '工程造价', '', '你比谁都清楚，一栋楼是怎么被算出来的。'],
+      ['ch', '测绘工程', '', '你在太阳底下扛着仪器站一天，只为量准三毫米。'],
+      ['jzx', '建筑学', '', '你熬的夜最多，画出来的东西却要显得毫不费力。'],
+      ['yjjs', '应急技术与管理', '', '别人往外跑的时候，你是往里走的那个。'],
+      ['aqgc', '安全工程', '', '你以后的工作，是让别人感觉不到你的存在。']
+    ] },
+    { key: 'yx', name: '医学中心', cat: 'med', majors: [
+      ['lcyx', '临床医学', '五年制', '你比同届晚一年毕业，却早一年进病房。', { five: true }],
+      ['hl', '护理学', '', '你值过的夜班，比很多人的大学课时还多。'],
+      ['kqyx', '口腔医学技术', '', '你做的不是牙，是别人笑起来的底气。'],
+      ['yxjy', '医学检验技术', '', '你的报告单，决定别人怎么过这一年。']
+    ] },
+    { key: 'ph', name: '药学院', cat: 'med', majors: [
+      ['yaox', '药学', '国家级一流专业', '你手里那粒药，背后是十年和一群人。'],
+      ['zhiyao', '制药工程', '省级一流专业', '你把实验室里的东西，变成能进车间的工艺。'],
+      ['ywzj', '药物制剂', '', '同样的药，你研究怎么让它更好吸收。']
+    ] },
+    { key: 'bs', name: '商学院', cat: 'biz', majors: [
+      ['kj', '会计学', '国家级一流专业', '借贷必相等，人生不一定。'],
+      ['gsgl', '工商管理', '国家级一流专业', '什么都学一点，什么都要会一点。'],
+      ['cwgl', '财务管理', '', '你管的不是钱，是别人对钱的期待。'],
+      ['gjmy', '国际经济与贸易', '', '你背了一堆术语，还没出过国。'],
+      ['sj', '审计学', '', '你的工作，是让别人睡不着觉。'],
+      ['jrkj', '金融科技', '', '一半金融，一半代码，哪一半都不轻松。']
+    ] },
+    { key: 'ly', name: '旅游与文化产业学院', cat: 'biz', majors: [
+      ['lygl', '旅游管理', '国家级一流专业', '你在成都读了四年书，把这座城当成了课本。'],
+      ['hzjj', '会展经济与管理', '省级一流专业', '你办过的每一场活动，散场时都要自己收拾。'],
+      ['whcy', '文化产业管理', '', '你研究怎么把“文化”卖出去，而且卖得体面。'],
+      ['jdgl', '酒店管理', '', '你学会的第一件事是：客人永远是对的。']
+    ] },
+    { key: 'wx', name: '文学与新闻传播学院', cat: 'hum', majors: [
+      ['hyywx', '汉语言文学', '国家级一流专业', '你读了很多书，还没想好拿它们做什么。'],
+      ['gbds', '广播电视学', '', '你扛着机器跑了四年，剪出来三分钟。'],
+      ['hygj', '汉语国际教育', '', '你以后要把“你好”教给一个完全陌生的世界。'],
+      ['wlxmt', '网络与新媒体', '', '你比谁都知道热点怎么来，也知道它怎么没的。']
+    ] },
+    { key: 'wy', name: '外国语学院', cat: 'hum', majors: [
+      ['tai', '泰语', '省级一流专业', '全成都学泰语的人，可能都在这间教室里。'],
+      ['yy', '英语', '', '你背了四年单词，最后发现最难的还是开口。'],
+      ['swyy', '商务英语', '', '你能用英语谈生意，也能用四川话砍价。']
+    ] },
+    { key: 'mx', name: '马克思主义学院', cat: 'hum', majors: [
+      ['szjy', '思想政治教育', '', '你以后要讲的那些道理，得先说服自己。']
+    ] },
+    { key: 'fx', name: '法学院', cat: 'hum', majors: [
+      ['faxue', '法学', '国家级一流专业', '你背完了所有能背的，然后发现现实不按条文走。'],
+      ['shgz', '社会工作', '', '你帮过很多人，工资单上不会写这些。']
+    ] },
+    { key: 'ms', name: '美术与设计学院', cat: 'art', majors: [
+      ['sjcd', '视觉传达设计', '国家级一流专业', '甲方说“再大一点”，你的四年就是这句话。'],
+      ['huihua', '绘画', '省级一流专业', '你画的东西没人买，但你还是每天画。'],
+      ['cpsj', '产品设计', '', '你设计的第一个东西，自己都用不上。'],
+      ['hjsj', '环境设计', '', '你把别人的家画得很美，自己的宿舍一团乱。']
+    ] },
+    { key: 'ys', name: '影视与动画学院', cat: 'art', majors: [
+      ['donghua', '动画', '国家级一流专业', '一秒二十四帧，一帧一帧熬出来。'],
+      ['gbdb', '广播电视编导', '国家级一流专业', '你喊“三、二、一，开始”的时候，全场都听你的。'],
+      ['szmtjs', '数字媒体技术', '', '技术要懂，审美要有，头发要掉。'],
+      ['szmtys', '数字媒体艺术', '', '你介于工程师和艺术家之间，两边都觉得你不专业。']
+    ] },
+    { key: 'md', name: '音乐与舞蹈学院', cat: 'art', majors: [
+      ['yyb', '音乐表演', '', '台上三分钟，台下四年琴房。'],
+      ['wdb', '舞蹈表演', '', '你的身体是乐器，也是最容易坏的那件。'],
+      ['yyjy', '音乐教育', '', '你以后要教小孩，先得让自己别怕小孩。']
+    ] },
+    { key: 'ty', name: '体育学院', cat: 'edu', majors: [
+      ['tyjy', '体育教育', '国家级一流专业', '你晒得最黑，也最不怕站到人前。'],
+      ['shty', '社会体育指导与管理', '省级一流专业', '你教别人怎么动，自己却总坐着。'],
+      ['xxty', '休闲体育', '', '别人问你学什么，你说“学怎么玩”，他们不信。']
+    ] },
+    { key: 'sf', name: '师范学院', cat: 'edu', majors: [
+      ['xqjy', '学前教育', '国家级一流专业', '你要蹲下来跟人说话，一蹲就是一辈子。'],
+      ['xxjy', '小学教育', '省级一流专业', '你将来要教一群比你还小不了几岁的人。'],
+      ['yyslx', '应用心理学', '', '你听得懂所有人的心事，除了自己的。'],
+      ['tsjy', '特殊教育', '', '你的学生可能不会说“谢谢”，但你会记很久。']
+    ] },
+    { key: 'st', name: '斯特灵学院（中外合作）', cat: 'gong', majors: [
+      ['xxtyhw', '休闲体育（中外合作）', '中英双学位', '课表一半在成都，一半在时差里。', { cat: 'edu' }],
+      ['dshw', '数据科学与大数据技术（中外合作）', '中英双学位', '全英文授课，连报错都是英文的。'],
+      ['wlxmthw', '网络与新媒体（中外合作）', '中英双学位', '你要同时理解两种舆论场。', { cat: 'hum' }]
+    ] },
+    { key: 'hw', name: '海外教育学院', cat: 'gong', majors: [
+      ['dqhw', '电气工程及其自动化（中外合作）', '中外合作办学', '全英文教材，学费也全英文。']
+    ] }
+  ];
+
+  /* ================= 展开成专业表 ================= */
+  GD.MAJORS = {};
+  GD.MAJOR_ORDER = [];
+  GD.COLLEGES.forEach(function (c) {
+    c.majors.forEach(function (m) {
+      var opt = m[4] || {};
+      var cat = opt.cat || c.cat;
+      GD.MAJORS[m[0]] = {
+        key: m[0], name: m[1], tag: m[2], line: m[3],
+        college: c.name, collegeKey: c.key, cat: cat,
+        boost: opt.boost || CAT_BOOST[cat],
+        five: !!opt.five,
+        since: GD.MAJOR_SINCE[m[0]] || 2022
+      };
+      GD.MAJOR_ORDER.push(m[0]);
+    });
+  });
+
+  /* ================= 行动 ================= */
+  GD.ACTIONS = [
+    { id: 'lib', name: '泡图书馆', note: '绩点 + 技能，心情掉一点', eff: { gpa: 0.09, skill: 3, mood: -4 } },
+    { id: 'eng', name: '刷英语', note: '英语 + 一点绩点', eff: { english: 8, gpa: 0.02, mood: -3, money: -50 } },
+    { id: 'club', name: '社团 / 社交', note: '人脉 + 心情', eff: { network: 7, mood: 5, money: -100 } },
+    { id: 'work', name: '兼职 / 实习', note: '钱 + 履历，体魄掉', eff: { money: 800, resume: 6, fitness: -5, mood: -3 } },
+    { id: 'gym', name: '夜跑 / 健身', note: '体魄 + 心情', eff: { fitness: 8, mood: 8 } },
+    { id: 'slack', name: '摆烂打游戏', note: '心情大涨，绩点下滑', eff: { mood: 12, gpa: -0.10, skill: -1 } },
+    { id: 'prep', name: '备考', note: '备考点大涨，很耗人', req: 'prep', eff: { prep: 10, gpa: 0.02, mood: -5, fitness: -4 } },
+    { id: 'date', name: '陪 TA 走走', note: '心情 + 关系更深', req: 'romance', eff: { mood: 10, money: -150, network: 2 } }
+  ];
+
+  /* ================= 数值调参 ================= */
+  GD.TUNE = {
+    failLine: 2.0,
+    moodLine: 0,
+    failLimit: 3,
+    baoyan: { gpa: 3.55, resume: 24 },
+    kaoyan: { gpa: 0.35, eng: 0.25, prep: 0.30, mood: 0.10, need: 79 },
+    kaogong: { prep: 0.40, skill: 0.20, eng: 0.15, net: 0.10, mood: 0.05, gpa: 0.10, need: 56 },
+    job: { skill: 0.35, resume: 0.35, net: 0.15, gpa: 0.15, need: 68 },
+    stable: { need: 36 }
+  };
+
+  /* ================= 工具 ================= */
+  GD.EVENTS = [];
+  GD.ev = function (o) { GD.EVENTS.push(o); return o; };
+  GD.c = function (t, e, r, extra) {
+    var o = { t: t, e: e || {}, r: r || '' };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+
+  GD.ENDINGS = {};
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     事项库：同一件事可以在不同地点做，效果和结果文案不同
+     每条 [id, 名字, 效果, 一句结果]
+     ============================================================ */
+
+  GD.WINDOWS = [
+    {
+      id: 'study', name: '学习', icon: '📖', desc: '教室、图书馆，或者只是假装',
+      places: [
+        {
+          id: 'lib', name: '图书馆', note: '四楼靠窗，六点半就没位子',
+          items: [
+            ['major', '啃专业课', { gpa: 0.05, skill: 1, mood: -2 }, '你在四楼靠窗坐到闭馆，把第三章看了两遍。'],
+            ['eng', '背英语', { english: 5, gpa: 0.01, mood: -2 }, '单词本从 A 翻到 C，又翻回来了。'],
+            ['write', '写点自己的东西', { skill: 4, gpa: 0.01, mood: -1 }, '你写的东西没人看，但它是你自己的。'],
+            ['read', '看会儿闲书', { gpa: 0.02, mood: 3 }, '你借了一本和专业无关的书，一口气看了三章。']
+          ]
+        },
+        {
+          id: 'room', name: '空教室', note: '没人的教室，灯是声控的',
+          items: [
+            ['major', '啃专业课', { gpa: 0.035, skill: 1, mood: -1 }, '空教室里只有灯管的嗡嗡声，你反而看得进去。'],
+            ['hw', '把作业补完', { gpa: 0.03, mood: -1 }, '最后一排，灯一亮一灭，你写完了一整章习题。'],
+            ['audit', '蹭一节别人的课', { skill: 3, english: 2, mood: 2 }, '一整节课你只听懂了三分之一，但你觉得很值。'],
+            ['nap', '趴着睡一会儿', { mood: 6, fitness: 2, gpa: -0.01 }, '你趴在桌上睡了半小时，醒来时嘴角有印子。']
+          ]
+        },
+        {
+          id: 'dorm', name: '宿舍', note: '床上、桌前、或者被窝里',
+          items: [
+            ['major', '啃专业课', { gpa: 0.02, skill: 1, mood: -3 }, '室友在打游戏，你看了半小时，一页没翻过去。'],
+            ['eng', '背英语', { english: 3, mood: -1 }, '你躺在上铺背单词，背到第三个就睡着了。'],
+            ['fake', '假装看书', { mood: 4, gpa: -0.01 }, '书翻到第三页，你已经刷了四十分钟手机。'],
+            ['read', '躺着看会儿书', { gpa: 0.01, mood: 2 }, '你躺着看了二十页，然后睡着了，书盖在脸上。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'play', name: '玩', icon: '🎮', desc: '操场、后街、开黑，还有商场',
+      places: [
+        {
+          id: 'field', name: '操场', note: '晚上九点人最多',
+          items: [
+            ['ball', '打一场球', { fitness: 6, mood: 5 }, '你投进了一个绝杀，虽然没人记分。'],
+            ['run', '跑两圈', { fitness: 4, mood: 3 }, '跑到第二圈的时候，脑子终于空了。'],
+            ['eng', '边跑边听英语', { english: 2, fitness: 2, mood: -1 }, '耳机里循环同一段听力，跑到第三圈才听懂一句。']
+          ]
+        },
+        {
+          id: 'street', name: '后街', note: '烧烤、奶茶、打印店',
+          items: [
+            ['bbq', '吃烧烤', { money: -70, mood: 6 }, '五个人一百八十串，老板说“你们这届快毕业了吧”。'],
+            ['tea', '买杯奶茶', { money: -25, mood: 3 }, '你排了二十分钟，喝了两口，剩下的化成了水。'],
+            ['meal', '一起吃顿饭', { mood: 5, network: 2, money: -40 }, '四个人点了一桌，最后谁也没抢到买单。']
+          ]
+        },
+        {
+          id: 'game', name: '宿舍开黑', note: '键盘声可以响到两点',
+          items: [
+            ['duo', '打到凌晨', { mood: 8, gpa: -0.05, fitness: -2 }, '连赢三把，你觉得人生还有希望。'],
+            ['movie', '挤在一起看片', { money: -20, mood: 5 }, '两个人挤在一个屏幕前，声音不敢开大。']
+          ]
+        },
+        {
+          id: 'mall', name: '商场', note: '坐两站地铁就到',
+          items: [
+            ['movie', '看场电影', { money: -60, mood: 6, network: 2 }, '散场的时候外面在下雨，你站在门口不想走。'],
+            ['shop', '逛一圈', { money: -200, mood: 5 }, '你试了一件两千块的外套，然后放回去了。'],
+            ['eat', '在商场吃一顿', { money: -60, mood: 5, fitness: 1 }, '比食堂贵三倍，但确实好吃。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'life', name: '生活', icon: '🍜', desc: '吃饭、睡觉、挣点生活费',
+      places: [
+        {
+          id: 'canteen', name: '食堂', note: '一食堂到八食堂，外加民族餐厅 · 早 7-9 / 午 11-13 / 晚 17-19，特色窗口开到 21:30',
+          items: [
+            ['c1', '一食堂（一楼）', { money: -10, mood: 1, fitness: 1 }, '大锅菜，最便宜，人最多。排队二十分钟，打了三个菜，味道和价钱一样朴素。'],
+            ['c2', '民族餐厅', { money: -17, mood: 4 }, '在一食堂楼上。手抓饭配一碗汤，你第一次在学校吃撑。'],
+            ['c3', '二食堂', { money: -13, mood: 2 }, '自选称重。你端着盘子算了两遍价钱，最后放下了那块红烧肉。'],
+            ['c4', '三食堂', { money: -14, mood: 3 }, '家常炒菜。师傅舀了一勺红油，说“这个下饭”，你吃了两碗。'],
+            ['c5', '四食堂', { money: -12, mood: 3 }, '面食档。一碗牛肉面，汤比面好喝，你把汤喝完了。'],
+            ['c6', '五食堂', { money: -16, mood: 5, fitness: 1 }, '硬菜多。你点了一个荤一个素，吃完在楼下站了两分钟才走。'],
+            ['c7', '六食堂', { money: -15, mood: 4 }, '特色窗口，晚上九点半才收。你十点前赶到，抢到最后一份。'],
+            ['c8', '七食堂', { money: -20, mood: 5 }, '环境最好。灯很亮，桌椅是新的，菜价也是新的。'],
+            ['c9', '八食堂', { money: -18, mood: 5, fitness: 1 }, '走过去要绕半个学校。同学说“太远了”，你还是去了。']
+          ]
+        },
+        {
+          id: 'dorm2', name: '宿舍', note: '床是这四年最忠实的伙伴',
+          items: [
+            ['sleep', '睡个够', { mood: 8, fitness: 3 }, '你从下午两点睡到六点，醒来时天是橘色的。'],
+            ['tidy', '收拾一下', { mood: 3, fitness: 1 }, '拖了地，洗了衣服，宿舍亮了一个色号。'],
+            ['nap', '眯一会儿', { mood: 4, fitness: 1 }, '你在床上眯了半小时，醒来时室友都走了。'],
+            ['duo', '开一局', { mood: 6, gpa: -0.03, fitness: -1 }, '你说只打一局，然后天就亮了。']
+          ]
+        },
+        {
+          id: 'part', name: '兼职', note: '赚钱，也赚点别的',
+          items: [
+            ['flyer', '发传单', { money: 150, fitness: -3, mood: -2 }, '站了一天，下午三点腿开始抖。'],
+            ['oncampus', '校内勤工助学', { money: 300, resume: 2, mood: -1 }, '在图书馆整理书架，顺便把想看的书都记下来了。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'social', name: '社交', icon: '👥', desc: '社团、老乡、室友、老师',
+      places: [
+        {
+          id: 'club', name: '社团', note: '你还有一个没退的群',
+          items: [
+            ['join', '去参加活动', { network: 6, mood: 4, money: -60 }, '一下午搬了三十把椅子，但大家都记得你。'],
+            ['lead', '当一次负责人', { network: 8, resume: 3, mood: -5 }, '你才发现，组织一场活动比参加累十倍。']
+          ]
+        },
+        {
+          id: 'hometown', name: '老乡会', note: '在外地听到乡音',
+          items: [
+            ['meet', '聚一次', { network: 3, mood: 7 }, '一桌人说{ACCENT}，桌上摆着{FOOD}，你差点没忍住。']
+          ]
+        },
+        {
+          id: 'roomie', name: '室友', note: '四年里离你最近的四个人',
+          items: [
+            ['meal', '凑一顿饭', { mood: 5, network: 2, money: -30 }, '你们点了外卖，坐在床沿上吃。'],
+            ['duo', '一起开黑', { mood: 7, network: 2, gpa: -0.02 }, '四个人一队，输了一晚上，笑了一晚上。']
+          ]
+        },
+        {
+          id: 'teacher', name: '老师办公室', note: '门一直开着',
+          items: [
+            ['ask', '去问问题', { skill: 4, network: 4, gpa: 0.02, mood: -2 }, '老师给你讲了二十分钟，还借了你一本书。'],
+            ['audit', '顺便旁听一节', { skill: 3, gpa: 0.01, mood: 1 }, '老师说“想来就来”，你就真的每周都来了。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'practice', name: '实践', icon: '💼', desc: '实习、竞赛、志愿、实验室',
+      places: [
+        {
+          id: 'intern', name: '实习', note: '地铁一小时，日薪一百二',
+          items: [
+            ['go', '去公司待一阵', { resume: 5, skill: 2, money: 600, fitness: -4, mood: -2 }, '你第一次听到“上线”这个词，也第一次知道什么叫需求变更。']
+          ]
+        },
+        {
+          id: 'contest', name: '竞赛', note: '组队、熬夜、交作品',
+          items: [
+            ['team', '组个队打比赛', { resume: 4, skill: 3, mood: -4 }, '你们熬了三个通宵，最后拿了三等奖。']
+          ]
+        },
+        {
+          id: 'vol', name: '志愿', note: '穿马甲，站一天',
+          items: [
+            ['serve', '去做志愿者', { resume: 3, mood: 4, network: 2 }, '你连着站了六天岗，有个外国朋友教你说谢谢。']
+          ]
+        },
+        {
+          id: 'lab', name: '实验室', note: '仪器要预约，排到凌晨',
+          items: [
+            ['do', '跟一个项目', { skill: 4, resume: 3, mood: -3 }, '你在实验台上趴了半小时，醒来时窗外刚亮。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'prep', name: '备考', icon: '📚', desc: '自习室、真题、倒计时', req: 'prep',
+      places: [
+        {
+          id: 'room2', name: '自习室', note: '五点开门，四点半就有人排队',
+          items: [
+            ['ky', '刷考研真题', { prep: 8, mood: -5, fitness: -2 }, '一套卷子做完，红笔比黑笔用得多。'],
+            ['xg', '刷行测', { prep: 7, mood: -4 }, '图形推理你做梦都在推。'],
+            ['sl', '写申论', { prep: 6, skill: 2, mood: -3 }, '你写了三千字，老师说“字不错”。']
+          ]
+        },
+        {
+          id: 'lib2', name: '图书馆', note: '安静，但要多走十分钟',
+          items: [
+            ['ky', '刷考研真题', { prep: 6, mood: -3 }, '旁边的人在背政治，你莫名有了紧迫感。'],
+            ['sl', '写申论', { prep: 5, skill: 1, mood: -2 }, '你抄了三篇范文，抄着抄着有了点感觉。']
+          ]
+        }
+      ]
+    },
+    {
+      id: 'love', name: '恋爱', icon: '💗', desc: '有人陪你走一段', req: 'romance',
+      places: [
+        {
+          id: 'outside', name: '校外', note: '湖边、小酒馆、夜市',
+          items: [
+            ['date', '出去走走', { mood: 8, money: -120, rom: 1 }, '你们在湖边坐到熄灯，什么也没干。']
+          ]
+        },
+        {
+          id: 'lib3', name: '图书馆', note: '一人一半耳机',
+          items: [
+            ['study2', '一起自习', { mood: 5, gpa: 0.02, rom: 1 }, '一人一半耳机，你把那道题看懂了。']
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* ============================================================
+     精力消耗（2 小时基准，负数表示回精力）
+     ============================================================ */
+  GD.ITEM_COST = {
+    major: 13, eng: 8, write: 9, read: 1, hw: 6, audit: 3, fake: -3, nap: -9,
+    ball: 9, run: 6, bbq: -1, tea: -2, meal: -2, duo: 3, movie: -2, shop: 4, eat: -3,
+    sleep: -22, tidy: 3, fast: -1, flyer: 12, oncampus: 8,
+    join: 4, lead: 9, meet: -3, ask: 5,
+    go: 18, team: 14, serve: 8, do: 14,
+    ky: 16, xg: 15, sl: 14,
+    date: 2, study2: 5,
+    c1: -4, c2: -5, c3: -4, c4: -4, c5: -3, c6: -5, c7: -4, c8: -5, c9: -5
+  };
+
+  /* ============================================================
+     时长档：2 / 4 / 6 小时。时间越长，效果增长慢、精力消耗增长快
+     ============================================================ */
+  GD.DUR = [
+    { m: 1, hours: 2, label: '一会儿', note: '占 1 块时间', eff: 1.0, cost: 1.0, slots: 1 },
+    { m: 2, hours: 4, label: '半天', note: '占 2 块时间', eff: 1.7, cost: 1.8, slots: 2 },
+    { m: 3, hours: 6, label: '一整天', note: '占 3 块时间', eff: 2.1, cost: 2.4, slots: 3 }
+  ];
+  /* 有些事情本身就有固定时长，不能自己拉长 */
+  GD.ITEM_FIX = {
+    lead: 1, join: 2, meet: 2, ask: 1, serve: 2, go: 3, team: 3, do: 2,
+    flyer: 2, oncampus: 2, movie: 2, shop: 2, meal: 1, bbq: 1, tea: 1,
+    eat: 1, fast: 1, nap: 1, tidy: 1, ball: 2, run: 1, read: 1, fake: 1,
+    hw: 2, audit: 1, write: 2, eng: 1, date: 2, study2: 2, duo: 2,
+    c1: 2, c2: 1, c3: 1, c4: 2, c5: 1, c6: 1, c7: 1, c8: 1, c9: 2
+  };
+  /* 单次「重」额外掉心情 */
+  GD.LONG_MOOD = -2;
+  /* 每月的总效果缩放（48 个月，平均摊薄） */
+  GD.BASE_SCALE = 0.12;
+  /* 每月自然恢复的精力 */
+  GD.ENERGY_REGEN = 36;
+  GD.ENERGY_MAX = 100;
+
+  /* 展开成方便查询的结构 */
+  GD.WIN = {};
+  GD.WINDOWS.forEach(function (w) {
+    w.placeMap = {};
+    w.places.forEach(function (p) {
+      p.itemMap = {};
+      p.items = p.items.map(function (it) {
+        var o = { id: it[0], name: it[1], eff: it[2], r: it[3], win: w.id, place: p.id };
+        p.itemMap[o.id] = o;
+        return o;
+      });
+      w.placeMap[p.id] = p;
+    });
+    GD.WIN[w.id] = w;
+  });
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (GD) {
+  'use strict';
+  /* 给常用地点补选项。表里没有的地点跳过，不报错。 */
+  function findPlace(winId, placeId) {
+    var w = null, p = null;
+    GD.WINDOWS.forEach(function (x) { if (x.id === winId) w = x; });
+    if (!w) return null;
+    w.places.forEach(function (x) { if (x.id === placeId) p = x; });
+    return p;
+  }
+  function add(winId, placeId, items) {
+    var p = findPlace(winId, placeId);
+    if (!p) return;
+    items.forEach(function (it) { p.items.push(it); });
+  }
+
+  add('study', 'lib', [
+    ['note', '整理笔记', { gpa: 0.03, skill: 2, mood: 1 }, '你把三个星期的笔记压成两页，突然看懂了一件事。'],
+    ['group', '和同学结伴自习', { gpa: 0.03, network: 3, mood: 2 }, '谁都不好意思先走，于是一起坐到了十点。'],
+    /* 毕设：大四才出现 */
+    ['thesis', '写毕业论文', { gpa: 0.01, mood: -3 }, '你打开文档，光标闪了很久，才敲下第一行。',
+      function (s) { return s.ch >= 7; }]
+  ]);
+  add('study', 'room', [
+    ['mock', '做一套真题', { gpa: 0.04, english: 2, mood: -2 }, '计时两小时，你只做完三分之二，铃声就响了。']
+  ]);
+  add('life', 'dorm2', [
+    ['call', '给家里打个电话', { mood: 5, network: 2 }, '你妈问了三遍钱够不够花，你说够。']
+  ]);
+  add('play', 'field', [
+    ['walk', '在操场走圈', { mood: 3, fitness: 2, network: 2 }, '你和室友走了十圈，谁都没提学习的事。']
+  ]);
+  add('play', 'street', [
+    ['ktv', '去唱歌', { mood: 7, network: 3, money: -60 }, '你唱了两首，第二首被切了。']
+  ]);
+  add('social', 'club', [
+    ['fare', '摆摊招新', { network: 4, resume: 2, mood: 1, money: -30 }, '你守了两小时摊位，加了七个微信。']
+  ]);
+  add('practice', 'intern', [
+    ['overtime', '留下来加班', { resume: 5, money: 60, mood: -4, fitness: -2 }, '九点，办公室只剩你和保洁阿姨。']
+  ]);
+  add('practice', 'lab', [
+    ['data', '跑数据', { skill: 3, resume: 2, gpa: 0.02, mood: -2 }, '跑了一下午，结果和预期完全相反。']
+  ]);
+
+  ['note', 'group', 'thesis', 'mock', 'call', 'walk', 'ktv', 'fare', 'overtime', 'data']
+    .forEach(function (k) { if (GD.ITEM_COST[k] === undefined) GD.ITEM_COST[k] = 6; });
+
+  Object.assign(GD.ITEM_COST, {
+    note: 5, group: 4, thesis: 9, mock: 7, call: -3, walk: -4, ktv: 5, fare: 6, overtime: 16, data: 9
+  });
+  Object.assign(GD.ITEM_FIX, {
+    note: 2, group: 2, thesis: 3, mock: 2, call: 1, walk: 1, ktv: 3, fare: 2, overtime: 3, data: 2
+  });
+})(globalThis.GD);
+
+</script>
+<script>
+(function (GD) {
+  'use strict';
+  /* 每类地点一张内联 SVG。全部矢量，不引外部图片。 */
+  var INK = '#43392a';
+  var INK2 = '#6b5f4c';
+  var SOFT = '#e3d9c6';
+  var SOFT2 = '#efe7d7';
+  var ACC = '#b0792c';
+  var PAPER = '#fbf7ee';
+
+  function wrap(inner) {
+    return '<svg viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">' +
+      '<rect width="300" height="110" fill="' + PAPER + '"/>' + inner + '</svg>';
+  }
+
+  /* 图书馆：书架 + 长桌 + 台灯 */
+  var lib = wrap(
+    '<rect x="0" y="86" width="300" height="24" fill="' + SOFT2 + '"/>' +
+    '<rect x="16" y="18" width="62" height="66" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="16" y1="40" x2="78" y2="40" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<line x1="16" y1="62" x2="78" y2="62" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<rect x="22" y="24" width="5" height="14" fill="' + ACC + '"/><rect x="30" y="22" width="5" height="16" fill="' + SOFT + '"/>' +
+    '<rect x="38" y="26" width="5" height="12" fill="' + INK2 + '"/><rect x="47" y="23" width="5" height="15" fill="' + ACC + '"/>' +
+    '<rect x="22" y="46" width="5" height="15" fill="' + SOFT + '"/><rect x="30" y="44" width="5" height="17" fill="' + ACC + '"/>' +
+    '<rect x="22" y="68" width="5" height="15" fill="' + INK2 + '"/><rect x="31" y="69" width="5" height="14" fill="' + SOFT + '"/>' +
+    '<rect x="104" y="70" width="180" height="7" fill="' + SOFT + '"/>' +
+    '<rect x="112" y="77" width="6" height="22" fill="' + INK2 + '"/><rect x="270" y="77" width="6" height="22" fill="' + INK2 + '"/>' +
+    '<rect x="196" y="52" width="34" height="5" fill="' + INK + '"/>' +
+    '<path d="M213 52 L213 40 L226 40 L226 52" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' +
+    '<circle cx="226" cy="36" r="4" fill="' + ACC + '" opacity=".8"/>' +
+    '<rect x="136" y="58" width="26" height="12" fill="' + SOFT2 + '" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<circle cx="170" cy="34" r="7" fill="none" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<path d="M170 41 L168 56 M170 41 L176 56" stroke="' + INK2 + '" stroke-width="1.2" fill="none"/>'
+  );
+
+  /* 空教室：黑板 + 课桌 */
+  var room = wrap(
+    '<rect x="0" y="86" width="300" height="24" fill="' + SOFT2 + '"/>' +
+    '<rect x="30" y="12" width="150" height="46" fill="' + INK + '" opacity=".88"/>' +
+    '<line x1="42" y1="28" x2="120" y2="28" stroke="' + PAPER + '" stroke-width="1.6" opacity=".7"/>' +
+    '<line x1="42" y1="38" x2="96" y2="38" stroke="' + PAPER + '" stroke-width="1.6" opacity=".55"/>' +
+    '<line x1="42" y1="48" x2="140" y2="48" stroke="' + ACC + '" stroke-width="1.6" opacity=".85"/>' +
+    '<rect x="196" y="14" width="76" height="56" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="234" y1="14" x2="234" y2="70" stroke="' + INK2 + '" stroke-width="1.1"/>' +
+    '<rect x="24" y="72" width="54" height="6" fill="' + INK2 + '"/><rect x="30" y="78" width="5" height="16" fill="' + INK2 + '"/><rect x="67" y="78" width="5" height="16" fill="' + INK2 + '"/>' +
+    '<rect x="96" y="72" width="54" height="6" fill="' + INK2 + '"/><rect x="102" y="78" width="5" height="16" fill="' + INK2 + '"/><rect x="139" y="78" width="5" height="16" fill="' + INK2 + '"/>' +
+    '<rect x="168" y="72" width="54" height="6" fill="' + INK2 + '"/><rect x="174" y="78" width="5" height="16" fill="' + INK2 + '"/><rect x="211" y="78" width="5" height="16" fill="' + INK2 + '"/>'
+  );
+
+  /* 宿舍：上下铺 + 窗 + 月光 */
+  var dorm = wrap(
+    '<rect x="0" y="88" width="300" height="22" fill="' + SOFT2 + '"/>' +
+    '<rect x="20" y="30" width="96" height="62" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<rect x="24" y="34" width="88" height="16" fill="' + SOFT + '"/>' +
+    '<rect x="24" y="66" width="88" height="16" fill="' + SOFT + '"/>' +
+    '<rect x="20" y="28" width="96" height="4" fill="' + INK2 + '"/>' +
+    '<circle cx="216" cy="34" r="11" fill="' + ACC + '" opacity=".28"/>' +
+    '<rect x="180" y="16" width="88" height="58" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="224" y1="16" x2="224" y2="74" stroke="' + INK2 + '" stroke-width="1.1"/>' +
+    '<rect x="140" y="66" width="34" height="6" fill="' + INK2 + '"/>' +
+    '<rect x="150" y="72" width="4" height="22" fill="' + INK2 + '"/><rect x="162" y="72" width="4" height="22" fill="' + INK2 + '"/>' +
+    '<rect x="146" y="56" width="20" height="10" fill="' + ACC + '" opacity=".6"/>'
+  );
+
+  /* 操场：跑道 + 两个人 */
+  var field = wrap(
+    '<rect x="0" y="70" width="300" height="40" fill="' + ACC + '" opacity=".16"/>' +
+    '<path d="M-10 96 Q150 62 310 96" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<path d="M-10 104 Q150 70 310 104" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<circle cx="96" cy="42" r="6" fill="' + INK + '"/>' +
+    '<path d="M96 48 L92 66 M96 48 L102 66 M96 54 L86 50 M96 54 L106 50" stroke="' + INK + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="150" cy="46" r="6" fill="' + INK2 + '"/>' +
+    '<path d="M150 52 L146 70 M150 52 L156 70 M150 58 L141 54 M150 58 L159 54" stroke="' + INK2 + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="236" cy="40" r="5" fill="' + ACC + '"/>' +
+    '<path d="M236 45 L233 62 M236 45 L240 62" stroke="' + ACC + '" stroke-width="2" fill="none" stroke-linecap="round"/>'
+  );
+
+  /* 后街：店招 + 灯串 + 摊 */
+  var street = wrap(
+    '<rect x="0" y="80" width="300" height="30" fill="' + SOFT2 + '"/>' +
+    '<path d="M0 26 Q75 40 150 26 Q225 12 300 26" fill="none" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<circle cx="40" cy="31" r="3" fill="' + ACC + '"/><circle cx="90" cy="34" r="3" fill="' + ACC + '"/><circle cx="140" cy="30" r="3" fill="' + ACC + '"/><circle cx="200" cy="24" r="3" fill="' + ACC + '"/><circle cx="255" cy="25" r="3" fill="' + ACC + '"/>' +
+    '<rect x="24" y="48" width="52" height="32" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<rect x="32" y="40" width="36" height="8" fill="' + ACC + '" opacity=".55"/>' +
+    '<rect x="96" y="44" width="60" height="36" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<rect x="174" y="52" width="42" height="28" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<path d="M174 52 L216 52" stroke="' + ACC + '" stroke-width="3"/>' +
+    '<circle cx="240" cy="66" r="9" fill="' + SOFT + '"/><rect x="228" y="74" width="24" height="6" fill="' + INK2 + '"/>'
+  );
+
+  /* 开黑：三台显示器 */
+  var game = wrap(
+    '<rect width="300" height="110" fill="#2f2a22"/>' +
+    '<rect x="26" y="30" width="66" height="42" fill="#4a4336" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<rect x="117" y="24" width="66" height="48" fill="#4a4336" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<rect x="208" y="30" width="66" height="42" fill="#4a4336" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<rect x="34" y="38" width="50" height="3" fill="' + ACC + '" opacity=".55"/>' +
+    '<rect x="34" y="46" width="34" height="3" fill="' + ACC + '" opacity=".35"/>' +
+    '<rect x="125" y="32" width="50" height="3" fill="' + ACC + '" opacity=".55"/>' +
+    '<rect x="125" y="40" width="40" height="3" fill="' + ACC + '" opacity=".35"/>' +
+    '<rect x="216" y="38" width="50" height="3" fill="' + ACC + '" opacity=".55"/>' +
+    '<rect x="216" y="46" width="28" height="3" fill="' + ACC + '" opacity=".35"/>' +
+    '<rect x="34" y="78" width="230" height="6" fill="#4a4336"/>' +
+    '<circle cx="240" cy="18" r="4" fill="' + ACC + '" opacity=".8"/>'
+  );
+
+  /* 食堂：打饭台 + 餐盘 + 热气 */
+  var canteen = wrap(
+    '<rect x="0" y="78" width="300" height="32" fill="' + SOFT2 + '"/>' +
+    '<rect x="0" y="62" width="300" height="16" fill="' + SOFT + '"/>' +
+    '<rect x="0" y="60" width="300" height="3" fill="' + INK2 + '"/>' +
+    '<rect x="26" y="40" width="34" height="20" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<rect x="72" y="44" width="34" height="16" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<rect x="118" y="40" width="34" height="20" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<path d="M40 34 q6 -12 0 -20 M52 34 q6 -10 0 -18" stroke="' + ACC + '" stroke-width="1.4" fill="none" opacity=".7"/>' +
+    '<ellipse cx="200" cy="52" rx="26" ry="7" fill="' + SOFT2 + '" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<rect x="182" y="46" width="10" height="6" fill="' + ACC + '" opacity=".7"/>' +
+    '<rect x="196" y="46" width="12" height="6" fill="' + INK2 + '" opacity=".5"/>' +
+    '<rect x="212" y="46" width="9" height="6" fill="' + ACC + '" opacity=".45"/>' +
+    '<circle cx="252" cy="36" r="8" fill="' + SOFT + '"/><path d="M252 44 L252 58" stroke="' + INK2 + '" stroke-width="2"/>'
+  );
+
+  /* 商场：玻璃幕墙 + 扶梯 */
+  var mall = wrap(
+    '<rect x="0" y="84" width="300" height="26" fill="' + SOFT2 + '"/>' +
+    '<rect x="20" y="14" width="150" height="70" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="70" y1="14" x2="70" y2="84" stroke="' + INK2 + '" stroke-width="1"/><line x1="120" y1="14" x2="120" y2="84" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<line x1="20" y1="38" x2="170" y2="38" stroke="' + INK2 + '" stroke-width="1"/><line x1="20" y1="62" x2="170" y2="62" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<path d="M186 84 L262 30" stroke="' + INK2 + '" stroke-width="1.6"/>' +
+    '<path d="M196 84 L272 30" stroke="' + INK2 + '" stroke-width="1.6"/>' +
+    '<line x1="196" y1="80" x2="200" y2="76" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<line x1="216" y1="66" x2="220" y2="62" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<line x1="236" y1="52" x2="240" y2="48" stroke="' + ACC + '" stroke-width="1.2"/>'
+  );
+
+  /* 实验室：台面 + 仪器 */
+  var lab = wrap(
+    '<rect x="0" y="80" width="300" height="30" fill="' + SOFT2 + '"/>' +
+    '<rect x="0" y="74" width="300" height="8" fill="' + SOFT + '"/>' +
+    '<rect x="40" y="46" width="26" height="28" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<path d="M50 46 L50 36 L58 36 L58 46" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<circle cx="52" cy="58" r="3" fill="' + ACC + '" opacity=".7"/>' +
+    '<rect x="96" y="50" width="44" height="24" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<path d="M104 50 L104 44 L132 44 L132 50" fill="none" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<rect x="106" y="58" width="24" height="3" fill="' + ACC + '" opacity=".6"/>' +
+    '<rect x="168" y="38" width="60" height="36" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="168" y1="52" x2="228" y2="52" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<circle cx="180" cy="46" r="2.5" fill="' + ACC + '"/><circle cx="192" cy="46" r="2.5" fill="' + INK2 + '"/>'
+  );
+
+  /* 实习：工位 */
+  var intern = wrap(
+    '<rect x="0" y="82" width="300" height="28" fill="' + SOFT2 + '"/>' +
+    '<rect x="60" y="60" width="180" height="8" fill="' + SOFT + '"/>' +
+    '<rect x="72" y="68" width="6" height="26" fill="' + INK2 + '"/><rect x="222" y="68" width="6" height="26" fill="' + INK2 + '"/>' +
+    '<rect x="112" y="26" width="76" height="34" fill="' + INK + '" opacity=".9"/>' +
+    '<rect x="120" y="34" width="56" height="3" fill="' + PAPER + '" opacity=".5"/>' +
+    '<rect x="120" y="42" width="38" height="3" fill="' + PAPER + '" opacity=".35"/>' +
+    '<rect x="146" y="60" width="8" height="0" fill="' + INK2 + '"/>' +
+    '<circle cx="88" cy="40" r="8" fill="' + SOFT + '"/><rect x="80" y="48" width="16" height="16" fill="' + SOFT + '"/>' +
+    '<rect x="40" y="70" width="20" height="4" fill="' + ACC + '" opacity=".6"/>'
+  );
+
+  /* 社团：横幅 + 桌子 + 人 */
+  var club = wrap(
+    '<rect x="0" y="84" width="300" height="26" fill="' + SOFT2 + '"/>' +
+    '<rect x="34" y="10" width="150" height="22" fill="' + ACC + '" opacity=".28"/>' +
+    '<rect x="34" y="10" width="150" height="22" fill="none" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<line x1="46" y1="18" x2="102" y2="18" stroke="' + INK2 + '" stroke-width="1.6"/>' +
+    '<line x1="46" y1="25" x2="150" y2="25" stroke="' + INK2 + '" stroke-width="1.6" opacity=".6"/>' +
+    '<rect x="150" y="58" width="90" height="7" fill="' + SOFT + '"/>' +
+    '<rect x="158" y="65" width="5" height="20" fill="' + INK2 + '"/><rect x="226" y="65" width="5" height="20" fill="' + INK2 + '"/>' +
+    '<circle cx="70" cy="50" r="7" fill="' + INK + '"/><rect x="62" y="58" width="16" height="26" fill="' + INK + '"/>' +
+    '<circle cx="104" cy="54" r="6" fill="' + INK2 + '"/><rect x="97" y="61" width="14" height="23" fill="' + INK2 + '"/>' +
+    '<circle cx="200" cy="44" r="7" fill="' + INK2 + '"/><rect x="192" y="52" width="16" height="6" fill="' + INK2 + '"/>'
+  );
+
+  /* 竞赛：奖杯 + 赛道 */
+  var comp = wrap(
+    '<rect x="0" y="86" width="300" height="24" fill="' + SOFT2 + '"/>' +
+    '<path d="M112 24 h44 v18 a22 22 0 0 1 -44 0 z" fill="' + ACC + '" opacity=".55" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<path d="M112 28 h-12 a12 12 0 0 0 12 12 M156 28 h12 a12 12 0 0 1 -12 12" fill="none" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<rect x="130" y="62" width="8" height="10" fill="' + INK2 + '"/>' +
+    '<rect x="118" y="72" width="32" height="6" fill="' + INK2 + '"/>' +
+    '<line x1="196" y1="30" x2="270" y2="30" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<line x1="196" y1="46" x2="270" y2="46" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<line x1="196" y1="62" x2="270" y2="62" stroke="' + INK2 + '" stroke-width="1.2"/>' +
+    '<circle cx="214" cy="30" r="3" fill="' + ACC + '"/><circle cx="248" cy="46" r="3" fill="' + ACC + '"/>'
+  );
+
+  /* 志愿：帐篷 + 马甲 */
+  var vol = wrap(
+    '<rect x="0" y="86" width="300" height="24" fill="' + SOFT2 + '"/>' +
+    '<path d="M60 78 L110 30 L160 78 Z" fill="' + ACC + '" opacity=".18" stroke="' + INK2 + '" stroke-width="1.3"/>' +
+    '<line x1="110" y1="30" x2="110" y2="78" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<rect x="188" y="44" width="34" height="40" fill="' + ACC + '" opacity=".35" stroke="' + ACC + '" stroke-width="1.2"/>' +
+    '<rect x="198" y="44" width="14" height="10" fill="' + PAPER + '" opacity=".8"/>' +
+    '<circle cx="205" cy="30" r="8" fill="' + SOFT + '"/>' +
+    '<rect x="240" y="66" width="40" height="5" fill="' + INK2 + '"/>'
+  );
+
+  /* 老乡会：圆桌 + 碗 */
+  var hometown = wrap(
+    '<rect x="0" y="84" width="300" height="26" fill="' + SOFT2 + '"/>' +
+    '<ellipse cx="150" cy="66" rx="76" ry="20" fill="' + SOFT + '" stroke="' + INK2 + '" stroke-width="1.3"/>' +
+    '<ellipse cx="120" cy="58" rx="12" ry="5" fill="' + PAPER + '" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<ellipse cx="150" cy="54" rx="12" ry="5" fill="' + PAPER + '" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<ellipse cx="180" cy="58" rx="12" ry="5" fill="' + PAPER + '" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<path d="M136 44 q4 -10 0 -16 M150 42 q4 -10 0 -16 M164 44 q4 -10 0 -16" stroke="' + ACC + '" stroke-width="1.3" fill="none" opacity=".55"/>' +
+    '<circle cx="54" cy="56" r="7" fill="' + INK + '"/><rect x="46" y="64" width="16" height="20" fill="' + INK + '"/>' +
+    '<circle cx="246" cy="56" r="7" fill="' + INK2 + '"/><rect x="238" y="64" width="16" height="20" fill="' + INK2 + '"/>'
+  );
+
+  /* 通用：校园 */
+  var def = wrap(
+    '<rect x="0" y="82" width="300" height="28" fill="' + SOFT2 + '"/>' +
+    '<circle cx="246" cy="28" r="12" fill="' + ACC + '" opacity=".25"/>' +
+    '<rect x="40" y="42" width="70" height="42" fill="none" stroke="' + INK2 + '" stroke-width="1.4"/>' +
+    '<line x1="52" y1="52" x2="68" y2="52" stroke="' + INK2 + '" stroke-width="1"/><line x1="80" y1="52" x2="96" y2="52" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<line x1="52" y1="64" x2="68" y2="64" stroke="' + INK2 + '" stroke-width="1"/><line x1="80" y1="64" x2="96" y2="64" stroke="' + INK2 + '" stroke-width="1"/>' +
+    '<circle cx="160" cy="52" r="9" fill="' + INK + '"/><rect x="150" y="61" width="20" height="23" fill="' + INK + '"/>' +
+    '<circle cx="196" cy="56" r="8" fill="' + INK2 + '"/><rect x="187" y="64" width="18" height="20" fill="' + INK2 + '"/>' +
+    '<rect x="228" y="52" width="6" height="32" fill="' + INK2 + '"/>' +
+    '<circle cx="231" cy="42" r="13" fill="' + ACC + '" opacity=".22"/>'
+  );
+
+  /* 上课：讲台 + 黑板 + 排排坐 */
+  var cls = wrap(
+    '<rect x="0" y="86" width="300" height="24" fill="' + SOFT2 + '"/>' +
+    '<rect x="60" y="10" width="180" height="44" fill="' + INK + '" opacity=".9"/>' +
+    '<line x1="76" y1="24" x2="170" y2="24" stroke="' + PAPER + '" stroke-width="1.6" opacity=".7"/>' +
+    '<line x1="76" y1="34" x2="146" y2="34" stroke="' + PAPER + '" stroke-width="1.6" opacity=".5"/>' +
+    '<line x1="76" y1="44" x2="200" y2="44" stroke="' + ACC + '" stroke-width="1.6" opacity=".9"/>' +
+    '<rect x="128" y="62" width="44" height="6" fill="' + INK2 + '"/>' +
+    '<circle cx="40" cy="64" r="6" fill="' + INK2 + '"/><rect x="32" y="70" width="16" height="16" fill="' + INK2 + '"/>' +
+    '<circle cx="86" cy="66" r="6" fill="' + INK2 + '"/><rect x="78" y="72" width="16" height="14" fill="' + INK2 + '"/>' +
+    '<circle cx="196" cy="66" r="6" fill="' + INK2 + '"/><rect x="188" y="72" width="16" height="14" fill="' + INK2 + '"/>' +
+    '<circle cx="242" cy="64" r="6" fill="' + INK2 + '"/><rect x="234" y="70" width="16" height="16" fill="' + INK2 + '"/>'
+  );
+
+  GD.ART = {
+    lib: lib, lib2: lib, lib3: lib, room: room, room2: room, cls: cls,
+    dorm: dorm, dorm2: dorm, field: field, street: street, game: game,
+    canteen: canteen, mall: mall, lab: lab, intern: intern, part: intern,
+    club: club, comp: comp, vol: vol, hometown: hometown,
+    roomie: dorm, teacher: intern, outside: street, def: def
+  };
+
+  /* 变体：0 白天（原图）／1 夜晚／2 雨天 */
+  function variant(svg, v) {
+    if (v === 1) {
+      return svg.replace('</svg>',
+        '<rect width="300" height="110" fill="#241d15" opacity=".58"/>' +
+        '<circle cx="250" cy="22" r="9" fill="#f0e2b4" opacity=".55"/>' +
+        '<circle cx="250" cy="22" r="16" fill="#f0e2b4" opacity=".10"/>' +
+        '</svg>');
+    }
+    if (v === 2) {
+      var rain = '';
+      for (var i = 0; i < 22; i++) {
+        var x = (i * 37) % 300;
+        var y = (i * 53) % 100;
+        rain += '<line x1="' + x + '" y1="' + y + '" x2="' + (x - 8) + '" y2="' + (y + 14) +
+          '" stroke="#6b7f8c" stroke-width="1" opacity=".35"/>';
+      }
+      return svg.replace('</svg>',
+        '<rect width="300" height="110" fill="#5c6f7a" opacity=".16"/>' + rain + '</svg>');
+    }
+    return svg;
+  }
+
+  function hash(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) & 0xffff;
+    return h;
+  }
+
+  GD.artFor = function (winId, placeId, itemId) {
+    var base = GD.ART[placeId] || GD.ART[winId] || GD.ART.def;
+    var v = hash(String(itemId || placeId || winId)) % 3;
+    return variant(base, v);
+  };
+})(globalThis.GD);
+
+</script>
+<script>
+(function (GD) {
+  'use strict';
+  /* 事项的第二句：按窗口 + 当前状态（心情/精力）挑一句，接在原有结果后面。 */
+  GD.REACT = {
+    study: {
+      good: ['这一段你读得很顺，笔记都写得整齐。', '你把想不通的那一处推开了，心里松了一下。'],
+      plain: ['窗外有人走过，你抬头看了一眼，又低下去。', '笔尖在纸上划过去，声音很轻。'],
+      lowMood: ['你看不进去，翻了三页又翻回来。', '书上的字都认识，连起来却什么都没有。'],
+      lowEnergy: ['眼睛发涩，你在桌上趴了两分钟。', '你打了个哈欠，把书立起来挡着脸。']
+    },
+    prep: {
+      good: ['错题比昨天少了两道，你在本子上画了个勾。', '这一套做下来，你第一次觉得有把握。'],
+      plain: ['倒计时又少了一天。', '你把错题抄到本子上，抄到第三页手就酸了。'],
+      lowMood: ['你盯着同一道题看了半小时。', '你算了半天，最后发现看错了题干。'],
+      lowEnergy: ['后半程你基本是在硬撑。', '眼皮往下掉，你掐了自己一把。']
+    },
+    play: {
+      good: ['回去的路上你还在笑，路灯把影子拉得很长。', '这一晚上你什么都没想，很好。'],
+      plain: ['时间过得比上课快。', '你回到宿舍，鞋都没脱就躺下了。'],
+      lowMood: ['你玩得并不投入，总在看手机。', '热闹是他们的，你只是坐在旁边。'],
+      lowEnergy: ['不到十点你就困了，提前回了宿舍。', '你靠在椅子上，眼睛快闭上了。']
+    },
+    life: {
+      good: ['这一顿吃得踏实，你觉得日子也没那么难过。', '你把碗里的汤都喝完了。'],
+      plain: ['吃完你在楼下站了一会儿才上楼。', '你端着盘子找了一圈位子。'],
+      lowMood: ['你没什么胃口，剩了一半。', '菜是热的，你吃得很快，没尝出味道。'],
+      lowEnergy: ['你几乎是闭着眼睛吃完的。', '吃完你趴在桌上不想动。']
+    },
+    social: {
+      good: ['散场的时候有人拍你肩膀，说下次还来。', '你记住了两张脸，也记住了两个名字。'],
+      plain: ['你记住了一半人的名字。', '散场的时候你帮着收了椅子。'],
+      lowMood: ['你在人群里站了一晚上，没怎么说话。', '他们聊得很热闹，你插不上嘴。'],
+      lowEnergy: ['你提前走了，没跟谁打招呼。', '后半场你一直在看时间。']
+    },
+    practice: {
+      good: ['收工时天已经黑了，但事情推进了一大截。', '带你的那个人说，这次做得不错。'],
+      plain: ['结束时你比来时更清楚自己不会什么。', '你把桌面收拾干净才走。'],
+      lowMood: ['你做得心不在焉，返工了两次。', '你盯着屏幕，脑子里在想别的事。'],
+      lowEnergy: ['你撑到最后，手都在抖。', '回去的地铁上你睡着了，坐过了两站。']
+    },
+    comp: {
+      good: ['交完作品那一刻，你长出一口气。', '不管结果如何，这一版你自己满意。'],
+      plain: ['结果要等，你先回了宿舍。', '队友说“下次还来”，你点了点头。'],
+      lowMood: ['你知道这次没做好。', '交上去的时候你不敢再看第二眼。']
+    },
+    love: {
+      good: ['回去的路上你们没怎么说话，但都笑着。', '分开的时候你回头看了一眼。'],
+      plain: ['分开的时候你说“到了发消息”。', '你把今天的事在脑子里过了一遍。'],
+      lowMood: ['你有点心不在焉，对方看出来了。', '你们各自看着手机，谁都没先开口。'],
+      lowEnergy: ['你打了好几个哈欠。', '你走得很慢，对方也放慢了脚步。']
+    }
+  };
+
+  GD.reactLine = function (winId, s) {
+    var pool = GD.REACT[winId] || GD.REACT.practice;
+    var state;
+    if (s.energy < 20) state = 'lowEnergy';
+    else if (s.mood < 30) state = 'lowMood';
+    else if (s.mood > 75) state = 'good';
+    else state = 'plain';
+    var arr = pool[state] || pool.plain || [];
+    if (!arr.length) return '';
+    return arr[Math.floor(Math.random() * arr.length)];
+  };
+})(globalThis.GD);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     八章主线：每章一次关键抉择
+     ============================================================ */
+
+  GD.ev({
+    id: 'm1', ch: [1, 1], main: true, title: '第一章 · 报到',
+    text: function (s) {
+      var arrive = GD.ARRIVE[s.far] || GD.ARRIVE[2];
+      var extra = s.far === 0
+        ? '你在成都长大，这条路走过很多次，只是这次是以学生的身份。'
+        : (s.far === 3 ? '你在机场给家里发了条消息，然后关掉手机。' : '车上你一直在想，四年之后会是什么样子。');
+      if (s.far > 0) extra += '食堂第一顿，你才发现这里连青菜都是辣的——你开始想念' + s.food + '。';
+      var drill = s.gender === 'f'
+        ? '女生的方阵在操场东头，教官是个比你们大不了几岁的女兵。'
+        : (s.gender === 'x' ? '方阵按身高排，你站在中间那一排。' : '男生的方阵在操场西头，教官的嗓子已经喊哑了。');
+      return '九月的成都还在下那种没完没了的雨。' + arrive + '\n\n' + extra + '\n\n' +
+        '军训第十六天，太阳终于出来了。' + drill + '教官喊解散，队伍却没人动——好像谁先走，这四年就要提前开始了。\n\n' +
+        '晚上是百团大战，操场边支了几十顶帐篷，每一顶都在喊你的名字。';
+    },
+    choices: [
+      GD.c('电子创意协会', { skill: 6, mood: 2 },
+        '你在招新摊位前看了很久，最后在一张报名表上写了名字。', { club: 'dianzi', log: '大一，你加入了电子创意协会' }),
+      GD.c('ERP 社团', { network: 4, resume: 3 },
+        '第一次开会，学长在白板上画了一张流程图，你记了两页。', { club: 'erp', log: '大一，你加入了 ERP 社团' }),
+      GD.c('F-orange 极限飞盘协会', { fitness: 6, mood: 3 },
+        '第一次训练你就把飞盘扔到了隔壁球场，被罚跑了三圈。', { club: 'feipan', log: '大一，你加入了极限飞盘协会' }),
+      GD.c('非遗协会', { mood: 5, skill: 2 },
+        '你跟着老师学了一下午的扎染，手指头染成了蓝色。', { club: 'feiyi', log: '大一，你加入了非遗协会' }),
+      GD.c('都不加，先把自己过明白', { mood: 4, gpa: 0.02 },
+        '你把每顶帐篷都逛了一遍，最后什么都没填。', { club: 'none', log: '大一，你没有加入任何社团' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm2', ch: [2, 2], main: true, title: '第二章 · 第一次期末',
+    text: '六月，图书馆四楼靠窗的位置早上六点半就没了。你抱着《高等数学》挤在楼梯口背公式，旁边有人小声念“abandon”。\n\n' +
+          '班群在传四级的报名链接，截止时间是今晚十二点。',
+    choices: [
+      GD.c('通宵突击，赌一把', { gpa: 0.15, fitness: -8, mood: -4, english: 3 },
+        '你在自习室看到凌晨四点，天光从窗户缝里渗进来。', { log: '大一下，你通宵突击了一次期末' }),
+      GD.c('提前两周，稳稳复习', { gpa: 0.10, mood: -2, english: 6 },
+        '每天三小时，雷打不动。你把四级也顺手报了。', { log: '大一下，你把期末和四级都稳稳拿下' }),
+      GD.c('佛系，60 分万岁', { gpa: -0.10, mood: 8 },
+        '你算了一下，及格线离你还有七分，够了。', { log: '大一下，你决定及格就好' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm3', ch: [3, 3], main: true, title: '第三章 · 转专业',
+    text: '辅导员在群里发了转专业通知，截止三天。你妈打了三个电话：“隔壁王阿姨的儿子学计算机，毕业就两万。”\n\n' +
+          '你翻了翻自己的成绩单，又翻了翻那张写满四年计划的纸——那张纸你已经很久没看了。',
+    choices: [
+      GD.c('转去更“好就业”的专业', { skill: 6, resume: 3, mood: -5, gpa: -0.05 },
+        '你交了表，也交出了一年的朋友。新班级里没人叫得出你的名字。', { log: '大二上，你转了专业', flag: 'switched' }),
+      GD.c('留下，教得好的课值得听', { gpa: 0.05, mood: 4, network: 3 },
+        '你想起大一那门讲得特别好的课，老师姓什么你都记得。', { log: '大二上，你决定留下来' }),
+      GD.c('辅修 / 双学位，两头都要', { gpa: 0.10, skill: 5, fitness: -6, mood: -4 },
+        '周一到周五满课，周六还有课。你的周末从此只剩周日晚上。', { log: '大二上，你报了个辅修' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm4', ch: [4, 4], main: true, title: '第四章 · 第一次面试',
+    text: '一家做小程序的公司来校招实习，日薪一百二，单程地铁一小时。面试官问：“你做过什么项目？”\n\n' +
+          '你想了三分钟，说的是社团活动。',
+    choices: [
+      GD.c('翘课去实习，先进去看看', { resume: 8, money: 1200, skill: 6, gpa: -0.08, mood: -3 },
+        '你在工位上第一次听到“上线”这个词，也第一次知道什么叫需求变更。', { log: '大二下，你翘课去实习了' }),
+      GD.c('留在学校，把课上完', { gpa: 0.10, skill: 3 },
+        '你把课表上的每一节都上完了。老师记住你了。', { log: '大二下，你决定先把课上完' }),
+      GD.c('自己做点东西，从零开始', { skill: 10, resume: 3, mood: -3, money: -200 },
+        '你在宿舍写了一个没人用的东西，但它真的是你写的。', { log: '大二下，你自己动手做了个项目' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm5', ch: [5, 5], main: true, title: '第五章 · 五十米外的三条路',
+    text: '十月的某个晚上，宿舍四个人都在刷手机。保研名单贴在学院楼下，考研自习室开始排队占座，班群里在传国考职位表。\n\n' +
+          '三条路都离你不到五十米，但只能走一条。',
+    choices: [
+      GD.c('考研。把书再读三年', { prep: 10, mood: -4 },
+        '你买了全套资料，第一页写了日期，字很用力。', { log: '大三上，你决定考研', set: 'kaoyan' }),
+      GD.c('考公。图一个稳', { prep: 8, network: 3, mood: -2 },
+        '你下载了职位表，用筛选器把“不限专业”那一栏看了三遍。', { log: '大三上，你决定考公', set: 'kaogong' }),
+      GD.c('直接就业。先去挣钱', { resume: 6, skill: 4, network: 3, money: 300 },
+        '你换了简历模板，把“熟练使用办公软件”删掉了。', { log: '大三上，你决定毕业就工作', set: 'job' }),
+      GD.c('都先不定，再想想', { mood: 8, prep: -4 },
+        '你把三个群都设成了免打扰。这个决定，你后来会反复想起。', { log: '大三上，你什么也没定' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm6', ch: [6, 6], main: true, title: '第六章 · 最后一个整块的暑假',
+    text: '期末最后一次班会，辅导员说：“这个暑假，是你们最后一次可以整块用来做一件事的假期。”\n\n' +
+          '教室里安静了几秒，然后有人笑了一声。',
+    choices: [
+      GD.c('留校闭关，把书啃完', { prep: 18, mood: -6, fitness: -6, gpa: 0.03 },
+        '自习室空调坏了，你买了第三个小风扇。那个夏天你只记得汗和错题本。', { log: '大三暑假，你留校闭关' }),
+      GD.c('去实习，先把简历填满', { resume: 10, money: 2000, skill: 5, mood: -3 },
+        '你在地铁上背单词，在公司里学做人。', { log: '大三暑假，你去实习了' }),
+      GD.c('回家，好好歇一个夏天', { mood: 12, fitness: 4, gpa: -0.05 },
+        '你妈的排骨汤和你的惰性一起回来了。八月结束时你有点慌，但没有后悔。', { log: '大三暑假，你回家了' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm7', ch: [7, 7], main: true, title: '第七章 · 三个日历',
+    text: '九月，秋招开始。十月，国考报名。十二月，考研初试。\n\n' +
+          '你在三个日历之间来回切换，像在同时谈三段恋爱，而每一段都知道另外两段的存在。',
+    choices: [
+      GD.c('全押考研，孤注一掷', { prep: 14, mood: -7, fitness: -4 },
+        '你把手机锁进了抽屉，钥匙给了室友。', { log: '大四上，你孤注一掷准备考研' }),
+      GD.c('全押考公，做题做到吐', { prep: 12, network: 4, mood: -5 },
+        '行测的图形推理你做梦都在推。', { log: '大四上，你全力备战公考' }),
+      GD.c('两手准备，简历和书一起看', { resume: 6, prep: 6, mood: -4 },
+        '你上午投简历，下午做真题，晚上怀疑自己。', { log: '大四上，你两条腿走路' }),
+      GD.c('先躺一会儿，来年再说', { mood: 10, prep: -6, resume: -3 },
+        '你告诉自己“春招还有机会”。这句话你说了四遍。', { log: '大四上，你选择了先喘口气' })
+    ]
+  });
+
+  GD.ev({
+    id: 'm8', ch: [8, 8], main: true, title: '第八章 · 最后一百天',
+    text: '三月，复试线出来。四月，省考面试。五月，毕业论文。六月，操场上的毕业照。\n\n' +
+          '你把行李箱从床底下拖出来的时候，发现它比四年前轻了很多。',
+    choices: [
+      GD.c('最后一搏，还能再冲一次', { prep: 8, resume: 3, mood: -4 },
+        '你把已经合上的书又掀开，书页间掉出一张去年的便签。', { log: '大四下，你最后又拼了一把' }),
+      GD.c('稳住，把毕业设计做完', { gpa: 0.06, resume: 4, mood: 5 },
+        '答辩那天你讲得很慢，老师在下面点了点头。', { log: '大四下，你稳稳地把毕业设计做完了' }),
+      GD.c('好好告别，和该吃散伙饭的人吃', { mood: 12, network: 5, money: -600 },
+        '后街的烧烤摊坐到凌晨，谁都没提以后。', { log: '大四下，你认真地和这里告别了' })
+    ]
+  });
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     校园日常（14）
+     ============================================================ */
+
+  GD.ev({
+    id: 'c01', ch: [1, 8], text: '一食堂上了个新窗口，队伍从窗口排到门口，招牌上写着“特色小炒·营业至晚九点”。\n\n你排在第二十七个。',
+    choices: [
+      GD.c('排。都排到这儿了', { mood: 6, money: -15, fitness: -2 }, '等了四十分钟，味道一般，但你发了个朋友圈。'),
+      GD.c('拐去二食堂，吃熟悉的', { mood: 2, money: -10 }, '阿姨认得你，多打了一勺土豆。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c02', ch: [1, 8],
+    text: function (s) {
+      var tail = s.gender === 'f'
+        ? '吹风机还在桌上，功率一千八。室友正把一桌子瓶瓶罐罐往抽屉里扫。'
+        : '吹风机还在桌上，功率一千八。';
+      return '晚上十一点，楼道里传来敲门声：“检查宿舍。”\n\n' + tail;
+    },
+    choices: [
+      GD.c('塞进柜子，装作没事', { mood: -4, network: 2 }, '阿姨看了两眼，走了。你和室友对视，憋笑憋到内伤。'),
+      GD.c('主动交上去，认罚', { mood: -2, money: -50 }, '登记本上写了你的名字。你觉得比藏着舒服一点。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c03', ch: [2, 8], text: '图书馆三楼，一个位置上放着一本书和一张纸条：“此座已占，谢谢。”\n\n书是《线性代数》，纸条是新的，人不在。',
+    choices: [
+      GD.c('挪开书，坐下', { gpa: 0.04, mood: -2 }, '半小时后书的主人来了，看了你一眼，什么也没说，走了。'),
+      GD.c('换个位置，不惹事', { gpa: 0.02, mood: 2 }, '你在四楼找到一个靠窗的位子，比这个好。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c04', ch: [2, 8], text: '体测一千米，第五圈的时候你觉得肺在烧。跑道边有人在喊加油，也有人已经坐在草地上笑。',
+    choices: [
+      GD.c('硬撑到底，别丢人', { fitness: 4, mood: -4 }, '冲线的时候你听见自己的心跳，像有人在敲铁皮。'),
+      GD.c('走完最后两百米', { fitness: 1, mood: 2 }, '你走得很慢，但确实是自己走完的。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c05', ch: [1, 8], text: '快递显示已签收，驿站说没这件。你在货架之间找了二十分钟，管理员说“再等等，可能明天就出来了”。',
+    choices: [
+      GD.c('走流程，填单子投诉', { mood: -3, money: 80 }, '三天后包裹出现了，说是放错了柜子。你拿到了八十块补偿。'),
+      GD.c('算了，重新买一份', { money: -120, mood: 1 }, '你重新下了单，心里骂了一句，然后打开外卖。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c06', ch: [1, 8], text: '凌晨一点，室友的键盘声还在响。你翻了个身，床板跟着叫了一声。明天早上八点有课。',
+    choices: [
+      GD.c('说一声', { mood: 3, network: -2 }, '他“哦”了一声，声音小了半小时，又大了。'),
+      GD.c('戴上耳塞，忍', { mood: -3, fitness: -2 }, '你六点才睡着，第二天在课上睡了两节。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c07', ch: [1, 8], text: '老师在讲台上点名，念到你名字的时候停了一下，抬头看了教室一圈。\n\n你坐在最后一排。',
+    choices: [
+      GD.c('举手：“到”', { gpa: 0.02, network: 1 }, '老师点点头，在名单上画了勾。你发现自己手心有点汗。'),
+      GD.c('低头，装作没听见', { mood: -2 }, '老师又叫了一遍，然后跳过了。你松了一口气，又有点不是滋味。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c08', ch: [1, 6], text: '兼职群里发消息：周六发传单，一天一百二，南门集合。\n\n你算了算，够吃五顿好的。',
+    choices: [
+      GD.c('去，站一天', { money: 120, fitness: -4, mood: -3 }, '下午三点你的腿开始抖，收工时手上一沓剩下的纸。'),
+      GD.c('不去，周末留给自己', { mood: 5, money: -60 }, '你睡到中午，吃了碗面，看了部老电影。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c09', ch: [2, 6], text: '校园歌手大赛报名最后一天，海报贴在食堂门口，冠军奖金八百。\n\n你其实会唱几首。',
+    choices: [
+      GD.c('报名，上台唱一次', { mood: 10, network: 6, money: -50 }, '你唱破了一个音，台下有人鼓掌，还有人吹口哨。'),
+      GD.c('当观众，坐第三排', { mood: 4, network: 2 }, '你跟着唱了整场，回宿舍的路上嗓子哑了。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c10', ch: [2, 7], text: '奖学金评定开始，班群里发了表格。你的绩点卡在中间那一档，差 0.12 分。\n\n申请表最后一栏是“个人事迹”。',
+    choices: [
+      GD.c('认真写，争取一下', { resume: 5, mood: -3, money: 800 }, '你写了三稿。公示名单出来那天，你在倒数第三个位置看到了自己。'),
+      GD.c('不写了，反正轮不到', { mood: 2, gpa: -0.02 }, '你把表格关了。后来听说最后一个名额给了别人。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c11', ch: [1, 8], text: '下课的时候雨突然大了。你站在教学楼门口，看着有人撑开伞走进雨里，有人打电话叫人送伞。',
+    choices: [
+      GD.c('淋回去', { fitness: -3, mood: -2 }, '你跑过操场，鞋全湿了。回宿舍冲了个热水澡，竟然有点爽。'),
+      GD.c('等雨小一点', { mood: 3 }, '你坐在台阶上看了四十分钟雨，把手机刷到没电。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c12', ch: [4, 7], text: '考研自习室的座位要抢，五点开门。你定了四点半的闹钟，窗外还是黑的。',
+    choices: [
+      GD.c('起，抢前排', { prep: 8, fitness: -6, mood: -4 }, '你抢到了第三排靠墙的位置，那里插座是好的。'),
+      GD.c('七点再去，有座就行', { prep: 4, mood: 2 }, '你去的时候只剩过道边的位置，人来人往，一上午没看进去几页。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c13', ch: [3, 8], text: '晚上十一点，宿舍熄了灯，你躺着刷手机，看见高中同学在朋友圈发保研截图、发实习工牌、发订婚照。\n\n你关掉屏幕，房间更黑了。',
+    choices: [
+      GD.c('给家里打个电话', { mood: 6, money: -20 }, '你妈问了三遍“钱够不够”，你说够了。挂了之后你睡了这几年最好的一觉。'),
+      GD.c('一个人下楼走走', { mood: 3, fitness: 2 }, '你在青涟湖边上坐到十二点，回去的时候保安在打哈欠。')
+    ]
+  });
+
+  GD.ev({
+    id: 'c14', ch: [5, 8], text: '带你的学长毕业了，走之前把一摞资料塞给你：“真题，别买新的，浪费钱。”\n\n他拖着箱子往校门口走，回头挥了挥手。',
+    choices: [
+      GD.c('请他吃最后一顿饭', { money: -180, network: 6, mood: 4 }, '你们在后街吃到打烊，他说“有问题随时问我”，你知道他会的。'),
+      GD.c('收下资料，说声谢谢', { prep: 5, mood: -2 }, '你抱着那摞书回宿舍，翻开第一页，全是他的笔记。')
+    ]
+  });
+
+  /* ============================================================
+     成都生活（6）
+     ============================================================ */
+
+  GD.ev({
+    id: 'd01', ch: [1, 4], text: '室友拉你去吃火锅。锅端上来，红油翻滚，服务员问：“微辣还是特辣？”\n\n全桌人都看着你——你是外地来的。',
+    choices: [
+      GD.c('“微辣。”', { mood: 8, money: -70, fitness: -2 }, '你吃了两片毛肚就喝了一整瓶豆奶，但他们说你很上道。'),
+      GD.c('“特辣，来都来了。”', { mood: 10, money: -70, fitness: -5 }, '那一晚你在宿舍卫生间里明白了一个词：辣到失聪。')
+    ]
+  });
+
+  GD.ev({
+    id: 'd02', ch: [2, 6], text: '周末去了人民公园。鹤鸣茶社里坐满了人，隔壁桌的阿姨正在给女儿相亲，声音很大，条件念得很清楚：\n\n“本科以上，成都有房。”',
+    choices: [
+      GD.c('坐一下午，喝盖碗茶', { mood: 8, money: -40 }, '你掏了耳朵，晒了太阳，什么也没干，觉得这才叫周末。'),
+      GD.c('走一圈就回学校', { mood: 2, gpa: 0.02 }, '你在公园门口买了串糖油果子，边走边吃。')
+    ]
+  });
+
+  GD.ev({
+    id: 'd03', ch: [1, 8], text: '熊猫基地，早上七点半门口已经排了队。你前面是个举着自拍杆的旅行团。',
+    choices: [
+      GD.c('排，来都来了', { mood: 9, money: -80, fitness: -3 }, '你看到一只熊猫在啃竹子，啃了二十分钟，你看了二十分钟。'),
+      GD.c('改天再说，人太多了', { mood: 2, money: 0 }, '你转头去了旁边的商场，买了杯奶茶。')
+    ]
+  });
+
+  GD.ev({
+    id: 'd04', ch: [3, 8], text: '成都的雨下了一整个星期。你的鞋没干过，阳台上挂着三双袜子，宿舍里有一股潮味。\n\n衣柜里的衣服开始发霉。',
+    choices: [
+      GD.c('买除湿袋和烘干机', { money: -150, mood: 4 }, '你把衣柜清空重晒了一遍，那晚睡得特别干爽。'),
+      GD.c('忍，成都人都这么过来的', { mood: -4, fitness: -2 }, '你穿着半干的鞋去上课，脚趾泡得发白。')
+    ]
+  });
+
+  GD.ev({
+    id: 'd05', ch: [2, 8], text: '早高峰的地铁四号线，你被挤在门边，脸贴着玻璃。对面的人在看考研网课，旁边的人抱着睡着的孩子。',
+    choices: [
+      GD.c('戴上耳机，背单词', { english: 4, mood: -2 }, '四十分钟你背了六十个单词，下车时全忘了。'),
+      GD.c('发呆，看窗外黑漆漆的隧道', { mood: 3 }, '你什么也没想，到站的时候差点坐过。')
+    ]
+  });
+
+  GD.ev({
+    id: 'd06', ch: [3, 8], text: '后街的烧烤摊，五个人，一百八十串，四瓶啤酒。老板认识你们了，说“你们这届快毕业了吧”。\n\n没人接话。',
+    choices: [
+      GD.c('喝到打烊', { mood: 12, money: -90, fitness: -4 }, '你们聊了高数和初恋，回去的路上有人唱了首歌。'),
+      GD.c('吃完就回，明天有事', { mood: 4, money: -60 }, '你先走了，回头看见他们还坐在那儿。')
+    ]
+  });
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     室友线（8）：老周 / 阿凯 / 小林 / 胖虎
+     ============================================================ */
+
+  GD.ev({
+    id: 'r01', ch: [1, 4], text: '老周每天六点起，床头的考研词汇已经翻烂了。今晚他问你：“要不要一起自习？”\n\n他桌上有一本《线性代数》，扉页写着“第四次”。',
+    choices: [
+      GD.c('去，跟着他', { gpa: 0.06, prep: 3, mood: -3, network: 4 }, '你们在图书馆坐到闭馆。他做题的速度让你怀疑人生，但也让你想再试试。'),
+      GD.c('不去，我有我的节奏', { mood: 3 }, '他说“行”，没再多问。第二天早上六点，他还是准时起了。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r02', ch: [3, 8], text: '老周拿了国家奖学金，请全宿舍吃饭。席间他说：“我可能去不了想去的学校了，家里想让我考公。”\n\n他说得很轻松，筷子一直在夹同一盘菜。',
+    choices: [
+      GD.c('劝他再想想，别放弃', { network: 4, mood: 2 }, '他沉默了很久，说“你说得对”，但你知道他不一定会改。'),
+      GD.c('只陪他喝，不评价', { mood: 3, network: 3 }, '你给他倒了酒。有些话不用说，喝了就行。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r03', ch: [1, 5], text: '阿凯的新鞋一个月四双，桌上摆着你叫不出名字的护肤品。他说：“周末去趟春熙路，我请。”',
+    choices: [
+      GD.c('去，见见世面', { mood: 8, network: 5, money: -100 }, '你在商场里第一次试了一件两千块的外套，然后放回去了。'),
+      GD.c('不去，我周末要打工', { money: 300, resume: 3, mood: -2 }, '他说“那你忙”，语气里没有恶意，你却有点不舒服。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r04', ch: [4, 8], text: '阿凯家里出了点事，他一个人在天台抽烟。你上去的时候，他说：“我爸公司可能要完了。”\n\n他把烟摁灭，说“别跟别人说”。',
+    choices: [
+      GD.c('坐下，陪他待一会儿', { network: 6, mood: -2 }, '你们在天台坐到天彻底黑。他后来说，那天谢谢你。'),
+      GD.c('说几句安慰，然后下去', { mood: 1 }, '你说了“会好的”，转身下楼。这句话你自己都不信。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r05', ch: [2, 6], text: '小林是学生会副主席，手机一天响八十次。他拉你去帮忙布置晚会：“就搬个东西，两小时。”\n\n结果是六小时。',
+    choices: [
+      GD.c('干完，还留下来收场', { network: 7, resume: 4, fitness: -4, mood: -3 }, '收完场已经凌晨，小林说明年推荐你进主席团。'),
+      GD.c('搬完就走，说好两小时', { network: 1, mood: 3 }, '他愣了一下，说“行，谢了”。后来他没再找过你。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r06', ch: [5, 8], text: '小林放弃了保研名额，说要去西部计划。“我算过了，两年回来还能考选调。”\n\n他给你看手机里的报名页面，手指停在“提交”上没按。',
+    choices: [
+      GD.c('“想清楚就去。”', { network: 4, mood: 3 }, '他按了提交，然后长长地出了一口气。'),
+      GD.c('“你疯了吧。”', { network: 2, mood: -1 }, '他笑了笑，把手机收起来。第二年他真去了。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r07', ch: [1, 4], text: '胖虎的床上永远有人在打游戏，外卖盒堆成小山。今晚他说：“兄弟们，我可能要退学了，挂了四门。”\n\n没人知道他是认真的还是在开玩笑。',
+    choices: [
+      GD.c('认真问一句：你还好吗', { network: 5, mood: -2 }, '他愣了几秒，说“没事”，然后关了电脑。那晚宿舍很安静。'),
+      GD.c('当成玩笑，跟着笑了', { mood: 3, network: -2 }, '他笑了两声，又打开游戏。第二学期，他真的没来。')
+    ]
+  });
+
+  GD.ev({
+    id: 'r08', ch: [6, 8], text: '毕业前最后一晚，胖虎突然说：“其实我大一的时候想过自杀。”\n\n他说得很平静，然后说：“现在想想，还好没干。”',
+    choices: [
+      GD.c('什么也不说，抱住他', { mood: 8, network: 8 }, '他拍了拍你的背，说“行了行了，肉麻”。'),
+      GD.c('“以后有事，随时找我。”', { mood: 5, network: 6 }, '他点头，说“记住了”。你把这句话写进了通讯录备注。')
+    ]
+  });
+
+  /* ============================================================
+     家庭 / 经济（5）
+     ============================================================ */
+
+  GD.ev({
+    id: 'f01', ch: [2, 6], text: '这个月生活费提前花完了。支付宝余额 43.6 元，离下个月还有十一天。\n\n你翻着通讯录，停在“妈”上面。',
+    choices: [
+      GD.c('打电话要钱', { money: 1200, mood: -4 }, '她没问为什么，只是说“够不够，再给你转点”。你挂了电话，很久没说话。'),
+      GD.c('不开口，去食堂吃最便宜的', { money: 300, fitness: -3, mood: -3 }, '你连着吃了十一天三块五的素面。阿姨后来说“加个蛋吧”，没要钱。')
+    ]
+  });
+
+  GD.ev({
+    id: 'f02', ch: [4, 8], text: '你爸打电话来，说厂里效益不好，让你“毕业赶紧找个稳定的”。\n\n他说完补了一句：“不是催你。”',
+    choices: [
+      GD.c('说“我知道”，听完', { mood: -3, network: 2 }, '挂电话前他说“钱不够就说”。你说够。'),
+      GD.c('解释你的打算', { mood: 2, resume: 2 }, '他听完沉默了一会儿，说“你长大了，自己定”。你不确定这是支持还是放弃。')
+    ]
+  });
+
+  GD.ev({
+    id: 'f03', ch: [5, 8], text: '过年回家，饭桌上三姑六婆开始轮番提问：“毕业什么打算？”“考不考公？”“有没有对象？”\n\n你妈在旁边给你夹菜，没帮你说话。',
+    choices: [
+      GD.c('认真回答，讲你的规划', { mood: -2, network: 3 }, '他们听完点点头，转头聊起了别家的孩子。'),
+      GD.c('“还在看，都试试。”', { mood: 4 }, '这句话很安全，一桌人都满意了。你喝了一口汤。')
+    ]
+  });
+
+  GD.ev({
+    id: 'f04', ch: [3, 7], text: '奶奶住院了，是老家县医院。你妈说“不严重，你别回来”，语气比平时快。',
+    choices: [
+      GD.c('请两天假，回去一趟', { mood: 4, money: -400, network: 3, gpa: -0.03 }, '你在病房陪了一晚，她一直问你“吃了吗”。回学校的高铁上你哭了。'),
+      GD.c('留下，每天打电话', { mood: -3, money: 0 }, '电话里她总说“好得很”。你信了，也不太敢不信。')
+    ]
+  });
+
+  GD.ev({
+    id: 'f05', ch: [5, 7], text: '考研机构来校宣讲，全程班八千八，含政治英语数学和“一对一择校”。\n\n宣讲老师说自己当年三本逆袭 985。',
+    choices: [
+      GD.c('报，花钱买心安', { money: -8800, prep: 12, mood: 2 }, '你拿到一箱资料和一个微信群，群里每天都有人打卡。'),
+      GD.c('不报，自己啃', { mood: -3, prep: 5 }, '你找了三个盗版网盘、两个学长，把资料凑齐了。')
+    ]
+  });
+
+  /* ============================================================
+     恋爱线（5）：投入越深，线越重
+     ============================================================ */
+
+  GD.ev({
+    id: 'l01', ch: [1, 3], text: '图书馆三楼，有人在你对面坐下。{P}抬头的时候你们对视了半秒，然后各自低头。\n\n{P}的笔袋上挂着一只熊猫。',
+    choices: [
+      GD.c('抬头，笑一下', { mood: 6, network: 2 }, '{P}也笑了，问你是不是也在赶那门课的论文。', { rom: 1, log: '大一大二，你在图书馆认识了一个人' }),
+      GD.c('继续刷题', { gpa: 0.03 }, '你把那一页又看了一遍，什么也没记住。')
+    ]
+  });
+
+  GD.ev({
+    id: 'l02', ch: [2, 5], rom: 1, text: '{P}问你周末去不去听 live，小酒馆，八十块一张票。\n\n你翻了一下日历，那天本来要交一份作业。',
+    choices: [
+      GD.c('去。作业可以熬夜写', { mood: 12, money: -130, gpa: -0.02 }, '{P}在人群里跟着唱，你看着{P}，觉得成都的秋天也没那么潮了。', { rom: 2, log: '你和 TA 去听了一场 live' }),
+      GD.c('不去，改天吧', { mood: -2, gpa: 0.02 }, '{P}说“好”，然后一个人去了。朋友圈里有一张照片，没有你。')
+    ]
+  });
+
+  GD.ev({
+    id: 'l03', ch: [4, 7], rom: 2, text: '{P}告诉你，{P}想考研去北京。“如果考上了，就是三年异地。”\n\n{P}说这话的时候在看别的地方。',
+    choices: [
+      GD.c('“去。我等你。”', { mood: 6, network: 2 }, '{P}转过头看你，眼睛有点红。你说完这句话，自己也愣了一下。', { rom: 3, log: '你和 TA 约好了异地三年' }),
+      GD.c('“那我们怎么办？”', { mood: -6, network: -2 }, '这个问题谁也没答上来。那天你们走到宿舍楼下，谁都没说再见。')
+    ]
+  });
+
+  GD.ev({
+    id: 'l04', ch: [6, 8], rom: 2, text: '{P}发消息：“我有点撑不住了，能不能见一面。”\n\n你手边是明天要交的实习报告。',
+    choices: [
+      GD.c('放下手上的事，去见', { mood: 8, resume: -2, money: -60 }, '你们在湖边坐到熄灯。{P}说了很多，你只听着。回去之后你把报告写到了三点。', { rom: 3 }),
+      GD.c('“明天行吗，今晚真的不行”', { mood: -8, network: -3 }, '{P}回了个“嗯”。这个“嗯”你看了很久。', { rom: 1 })
+    ]
+  });
+
+  GD.ev({
+    id: 'l05', ch: [7, 8], rom: 3, text: '毕业前，{P}问你：“所以，你去哪儿？”\n\n你答不上来。这个问题你问了四年，第一次觉得它是问句。',
+    choices: [
+      GD.c('“去哪儿都行，只要一起想。”', { mood: 10, network: 3 }, '{P}笑了，说“你这人真是”。你没有得到答案，但好像也不需要了。', { rom: 4, log: '毕业前，你决定和 TA 一起想以后' }),
+      GD.c('“各走各的吧，别耽误。”', { mood: -10, network: -4 }, '{P}点点头，说“我也是这么想的”。你们都松了口气，也都很难过。', { rom: 0 })
+    ]
+  });
+
+  /* ============================================================
+     专业专属（6）：每个专业一条
+     ============================================================ */
+
+  GD.ev({
+    id: 'major_cs', ch: [3, 8], major: ['cs'],
+    text: '课程设计要做一个完整系统，验收前一晚你发现数据库连不上。\n\n凌晨三点，宿舍只剩你的键盘声。',
+    choices: [
+      GD.c('改到五点，跑通再说', { skill: 10, fitness: -6, mood: -4 }, '六点二十，控制台终于打印出第一行结果。你截了图，存了三次。'),
+      GD.c('算了，交个能跑的版本', { skill: 3, mood: 2 }, '你删掉一半功能，勉强能演示。老师给的分不高，但你没熬夜。')
+    ]
+  });
+
+  GD.ev({
+    id: 'major_food', ch: [2, 8], major: ['spkx'],
+    text: '实验课要做菌落总数测定，你负责的平板培养三天后长出了一片不该有的东西。\n\n同组的同学看着你。',
+    choices: [
+      GD.c('重做一遍，从头来', { skill: 8, gpa: 0.04, fitness: -4, mood: -3 }, '第二次你戴了两层手套，每一步都拍照记录。老师说你这次做得最规范。'),
+      GD.c('照实写进报告，分析污染原因', { skill: 6, gpa: 0.05, mood: -2 }, '你在讨论部分写了八百字。老师批注：“这个反思比结果值钱。”')
+    ]
+  });
+
+  GD.ev({
+    id: 'major_acct', ch: [3, 8], major: ['kj'],
+    text: '会计技能大赛组队，缺一个人。队长说：“你来吧，你借贷记得牢。”\n\n比赛在周末，两天，没有补贴。',
+    choices: [
+      GD.c('去，拿个奖回来', { resume: 7, skill: 5, mood: -4, network: 3 }, '你们拿了省赛三等奖。证书拿在手里很轻，但简历上多了一行。'),
+      GD.c('不去，周末要备考', { prep: 6, network: -2 }, '队长找了别人。后来他们真的拿了奖，你在朋友圈点了赞。')
+    ]
+  });
+
+  GD.ev({
+    id: 'major_chinese', ch: [2, 8], major: ['hyywx'],
+    text: '写作课老师把你的散文念了一半，停下来问：“这段是你自己写的吗？”\n\n全班都在看你。',
+    choices: [
+      GD.c('“是我写的。”', { skill: 8, mood: 5, gpa: 0.04 }, '老师点点头，说“写得很好”，然后念完了。那节课你没听进去一个字。'),
+      GD.c('承认参考了一篇文章', { skill: 4, mood: -6, gpa: 0.02 }, '老师说了句“诚实很好”，但你整学期都在想那句话的意思。')
+    ]
+  });
+
+  GD.ev({
+    id: 'major_edu', ch: [3, 8], major: ['xxjy'],
+    text: '教育实习，你被分到一所小学带四年级。第一天上课，一个男孩举手问：“老师，你多大了？”\n\n全班笑成一片。',
+    choices: [
+      GD.c('笑着回答，把课上完', { skill: 7, mood: 8, resume: 5 }, '那节课你讲得磕磕绊绊，但下课有孩子围过来说“老师你下次还来吗”。'),
+      GD.c('板起脸，维持纪律', { skill: 3, mood: -3, resume: 3 }, '教室安静了，你也失去了一点什么。指导老师说“太严了”。')
+    ]
+  });
+
+  GD.ev({
+    id: 'major_tour', ch: [2, 8], major: ['lygl'],
+    text: '导游实训，你要在二十分钟里讲完一条成都的线路。同学当游客，故意刁难：“这个景点有啥子好耍的嘛？”',
+    choices: [
+      GD.c('接住梗，把气氛带起来', { skill: 8, network: 6, mood: 4 }, '你把洛带古镇讲成了一个故事，最后连老师都在笑。'),
+      GD.c('照着稿子讲完', { skill: 3, gpa: 0.04, mood: -2 }, '你讲得很完整，也很平。老师说“信息都对，就是没人想跟你走”。')
+    ]
+  });
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     家乡口味 / 口音（2）
+     ============================================================ */
+
+  GD.ev({
+    id: 'p01', ch: [1, 3], farMin: 1,
+    text: function (s) {
+      return '食堂的菜大多是辣的。你端着餐盘站了一会儿，忽然很想吃' + s.food + '。\n\n旁边一桌人在说' + s.accent + '，你多看了两眼。';
+    },
+    choices: [
+      GD.c('找老乡带点家乡的来', { mood: 7, network: 2, money: -60 },
+        '老乡塞给你一袋东西，说“省着点吃”。那天晚上你在宿舍吃到很晚。', { log: '大一，你收到过一包家乡的吃的' }),
+      GD.c('硬着头皮吃，慢慢习惯', { mood: -2, fitness: 2 },
+        '第一个月你瘦了三斤，第三个月你开始主动加辣。')
+    ]
+  });
+
+  GD.ev({
+    id: 'p02', ch: [1, 3],
+    text: function (s) {
+      return '宿舍夜聊，你说了句家乡话，室友跟着学，学得完全不像。\n\n' + s.accent + '，在他们嘴里成了另一种语言，全屋都在笑。';
+    },
+    choices: [
+      GD.c('教他们两句，一起笑', { network: 5, mood: 5 },
+        '后来他们学会了用你的方言骂人，你哭笑不得。', { log: '宿舍里多了几句你的家乡话' }),
+      GD.c('以后只说普通话', { mood: -2, network: 1 },
+        '你把口音一点点改掉了。回家那天，你妈说“你说话怎么变了”。')
+    ]
+  });
+
+  /* ============================================================
+     六大学科门类专属（6）
+     ============================================================ */
+
+  GD.ev({
+    id: 'k_gong', ch: [3, 8], cat: 'gong',
+    text: '实验室的大型仪器要预约，你抢到的是凌晨两点到四点的机时。\n\n值班的老师傅说：“来了就好好用，别浪费。”',
+    choices: [
+      GD.c('熬到四点，把数据跑完', { skill: 9, fitness: -6, mood: -5, gpa: 0.04 },
+        '你在实验台上趴了半小时，醒来时窗外刚亮，数据是漂亮的。'),
+      GD.c('改约白天，先回去睡', { skill: 3, mood: 4 },
+        '你把机时让给了师兄。他后来教了你一个很关键的技巧。')
+    ]
+  });
+
+  GD.ev({
+    id: 'k_med', ch: [3, 8], cat: 'med',
+    text: '第一次进病房见习。带教老师说：“站到床边去，看清楚。”\n\n你站在那儿，手不知道往哪放，眼睛也不知道往哪看。',
+    choices: [
+      GD.c('硬着头皮，把该看的看完', { skill: 8, mood: -6, fitness: -3 },
+        '回宿舍的路上你一句话没说。那天晚上你梦见了那条走廊。'),
+      GD.c('退到门口，先看流程', { skill: 4, mood: -2 },
+        '你在门口站了很久。老师没说你，只是下次把你叫到了更前面。')
+    ]
+  });
+
+  GD.ev({
+    id: 'k_biz', ch: [3, 8], cat: 'biz',
+    text: '商业案例大赛组队，五个人里有四个想当队长。\n\n轮到你发言的时候，会议室已经吵了四十分钟。',
+    choices: [
+      GD.c('把分工写下来，先干起来', { resume: 7, network: 5, skill: 4, mood: -3 },
+        '你当了一回不挂名的队长。比赛没进决赛，但你的表格救了这个队。'),
+      GD.c('退出，让他们吵', { mood: 2, network: -3 },
+        '你退群的时候没人挽留。后来那支队伍真的进了省赛。')
+    ]
+  });
+
+  GD.ev({
+    id: 'k_hum', ch: [3, 8], cat: 'hum',
+    text: '你投给校媒的稿子被退回来了，编辑的批注比原文还长。\n\n最后一行写着：“事实都对，但没有一个人是活的。”',
+    choices: [
+      GD.c('重写，回去再采访三个人', { skill: 8, gpa: 0.03, mood: -3 },
+        '第二版发出来那天，被采访的人在评论区说“谢谢”。'),
+      GD.c('算了，换一篇投', { skill: 2, mood: 2 },
+        '你把稿子收进文件夹，那个文件夹你后来再没打开过。')
+    ]
+  });
+
+  GD.ev({
+    id: 'k_edu', ch: [3, 8], cat: 'edu',
+    text: '试讲十分钟，讲台下坐着三十个同学和一个打分老师。\n\n你开口的第三句就忘了词，教案上的字忽然一个都不认识。',
+    choices: [
+      GD.c('停下来，问一句“听得清吗”', { skill: 8, mood: 4, resume: 4 },
+        '那三十个人一起说“听得清”。你重新讲了一遍，讲完了。'),
+      GD.c('照着教案念完', { skill: 3, mood: -4 },
+        '你念完了，时间刚好。老师说“内容没问题，就是没人听”。')
+    ]
+  });
+
+  GD.ev({
+    id: 'k_art', ch: [3, 8], cat: 'art',
+    text: '毕业作品展布展，你的作品被安排在走廊尽头，靠近洗手间。\n\n策展的学生说：“位置是按抽签排的。”',
+    choices: [
+      GD.c('认了，把画挂好就走', { mood: -6, skill: 3, network: -2 },
+        '开展那天，你在那面墙前站了一下午，只有五个人停下来看。'),
+      GD.c('找老师争取，换到主展厅', { network: 5, skill: 4, mood: -2, resume: 3 },
+        '老师说“早说啊”。你的作品挪到了光最好的那面墙。')
+    ]
+  });
+
+  /* ============================================================
+     成大地标（4）：大运村 / 张澜学院 / 至善杯 / 双选会
+     ============================================================ */
+
+  GD.ev({
+    id: 'x01', ch: [2, 3], once: true, yearMax: 2023,
+    text: function (s) {
+      return (s.year === 2022 ? '今年夏天，世界大学生运动会的运动员村就办在你们学校。开学时操场边还留着几条没拆的横幅。\n\n校团委招志愿者，说是能拿一张证书，还管两顿饭。'
+        : '去年夏天，世界大学生运动会的运动员村就办在这所学校。你填志愿的时候，招生老师专门提过这件事。\n\n校团委招志愿者，说是能拿一张证书，还管两顿饭。');
+    },
+    choices: [
+      GD.c('报名，去见见世面', { network: 7, resume: 5, fitness: -4, mood: 4 },
+        '你连着站了六天岗，见过十几个国家的队。有个外国运动员教你说“谢谢”。', { log: '你在大运村做了志愿者' }),
+      GD.c('不去，暑假要回家', { mood: 5, money: 0 },
+        '你在家庭群看到同学发的合影，心里有一点点后悔。')
+    ]
+  });
+
+  GD.ev({
+    id: 'x02', ch: [3, 3], once: true,
+    text: '学院群里发了拔尖创新班的选拔通知：三十个名额，单独课表，导师带。\n\n报名表最后一行写着：“需本人自愿，并承诺不中途退出。”',
+    choices: [
+      GD.c('报名，去试一次', { gpa: 0.12, skill: 5, mood: -5, fitness: -3 },
+        '笔试两百人，面试三十人。你进去了，从那天起，你的课表比别人多两行。', { log: '大二，你考进了拔尖班' }),
+      GD.c('不报，按自己的节奏来', { mood: 5, gpa: 0.02 },
+        '你看了一眼名额，又看了一眼自己的绩点，把通知关了。')
+    ]
+  });
+
+  GD.ev({
+    id: 'x03', ch: [2, 6],
+    text: '学校办校园马拉松，那天要封路，主干道全绕行。\n\n报名费三十，送一件荧光绿的 T 恤。',
+    choices: [
+      GD.c('报，跑个五公里', { fitness: 7, mood: 7, money: -30 },
+        '你跑到第三公里就想放弃，最后是被一个举着院旗的人带着跑完的。'),
+      GD.c('当观众，站在路边喊', { mood: 5, network: 2 },
+        '你喊了半小时，嗓子哑了，还被人塞了两瓶水。')
+    ]
+  });
+
+  GD.ev({
+    id: 'x04', ch: [7, 8], once: true,
+    text: '体育馆办秋季双选会，两百多家单位，门口排到了马路对面。\n\n你打印了十份简历，用塑料袋装着，怕下雨。',
+    choices: [
+      GD.c('一家一家投，投完十份', { resume: 9, network: 4, fitness: -4, mood: -3 },
+        '你被拒了七次，也被留下三份。有个 HR 说“你这个项目挺有意思”。', { log: '秋招，你把十份简历投完了' }),
+      GD.c('转一圈就走，网上投', { resume: 3, mood: 2 },
+        '你在门口买了瓶水，回宿舍打开了招聘网站。')
+    ]
+  });
+
+  /* ============================================================
+     生源地（2）：离家远的人抢票，本地人周末回家
+     ============================================================ */
+
+  GD.ev({
+    id: 'h01', ch: [1, 2], farMin: 2,
+    text: '放寒假前两周，12306 开售那天，宿舍四个人同时打开了抢票软件。\n\n你输了三次验证码，都是错的。',
+    choices: [
+      GD.c('盯三天，抢一张硬座', { money: -60, fitness: -5, mood: -4 },
+        '抢到了，硬座，十四个小时。你把这句话发到家庭群，你妈回了个“辛苦”。', { log: '大一寒假，你抢了一张硬座回家' }),
+      GD.c('咬牙买机票，早两小时到', { money: -250, mood: 5 },
+        '你多花了钱，换来一个下午。落地那天你爸在出口站了很久。')
+    ]
+  });
+
+  GD.ev({
+    id: 'h02', ch: [2, 6], prov: ['sc'],
+    text: '周六晚上，宿舍只剩你一个人。室友都出去玩了。\n\n你妈发消息：“明天回来吃饭不？”',
+    choices: [
+      GD.c('回，顺便把脏衣服带回去', { mood: 8, money: 100, fitness: -2 },
+        '一进门就闻到排骨汤。走的时候她往你包里塞了两百块，说“别告诉你爸”。', { log: '你常常周末回家吃饭' }),
+      GD.c('不回，一个人在宿舍待着', { mood: 2, gpa: 0.03 },
+        '宿舍很安静，你把那门课的作业写完了。晚上十点，你妈发了个“哦”。')
+    ]
+  });
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (GD) {
+  'use strict';
+  /* 每月开头的一句场景。按季节和年级筛，一局之内不重复。 */
+  GD.MONTH_LINES = [
+    /* 秋 9-11 */
+    { id: 'a1', sea: 'autumn', t: '九月的雨下了三天，操场边的桂花被打落一地。' },
+    { id: 'a2', sea: 'autumn', t: '银杏开始黄，从图书馆那排开始，一天黄一棵。' },
+    { id: 'a3', sea: 'autumn', t: '早晚凉了，宿舍楼下的早点摊换成了卖热豆浆的。' },
+    { id: 'a4', sea: 'autumn', t: '田径场晚上十点还亮着灯，有人在跑，也有人在散步。' },
+    { id: 'a5', sea: 'autumn', t: '图书馆门口的梧桐叶掉进水池，没人去捞。' },
+    { id: 'a6', sea: 'autumn', t: '快递堆到宿舍楼下，像一座小山，找起来要翻十分钟。', e: { mood: -1 } },
+    { id: 'a7', sea: 'autumn', t: '班里发了新的课表，有人已经开始算哪天能翘。' },
+    { id: 'a8', sea: 'autumn', t: '军训的晒痕还没退，手臂上有一条明显的分界线。', y: 1 },
+
+    /* 冬 12-2 */
+    { id: 'w1', sea: 'winter', t: '成都的冬天不下雪，只是潮，被子摸上去是凉的。' },
+    { id: 'w2', sea: 'winter', t: '期末周，通宵自习室的位置要提前一天占。' },
+    { id: 'w3', sea: 'winter', t: '食堂的热汤面窗口排到了门口。' },
+    { id: 'w4', sea: 'winter', t: '手洗的衣服晾了一周还是湿的，你只好用吹风机吹。' },
+    { id: 'w5', sea: 'winter', t: '回家的车票开售，你在凌晨刷新了三次。', e: { mood: 2 } },
+    { id: 'w6', sea: 'winter', t: '宿舍空调开到 30 度，还是有人喊冷。' },
+    { id: 'w7', sea: 'winter', t: '感冒了，鼻子堵了一个星期，上课只能靠听。', e: { fitness: -3 } },
+    { id: 'w8', sea: 'winter', t: '教学楼的暖气开得很足，靠窗的位置没人坐。' },
+
+    /* 春 3-5 */
+    { id: 's1', sea: 'spring', t: '三月的花开得突然，一夜之间整条路都白了。' },
+    { id: 's2', sea: 'spring', t: '有人在教学楼前的草坪上拍照，穿的是学士服。', e: { mood: 1 } },
+    { id: 's3', sea: 'spring', t: '雨停了，空气里有泥土的味道。' },
+    { id: 's4', sea: 'spring', t: '换季，宿舍楼下的旧衣回收箱塞满了。' },
+    { id: 's5', sea: 'spring', t: '春天的课总让人犯困，靠窗的位置最抢手。', e: { mood: -1 } },
+    { id: 's6', sea: 'spring', t: '操场边的花落了一地，扫地的阿姨扫了三遍。' },
+    { id: 's7', sea: 'spring', t: '有人在操场放风筝，线缠到了树上。', e: { mood: 2 } },
+    { id: 's8', sea: 'spring', t: '选修课开始选，热门的那门两分钟就满了。' },
+
+    /* 夏 6-8 */
+    { id: 'u1', sea: 'summer', t: '六月的成都开始闷，教室的吊扇转得有气无力。' },
+    { id: 'u2', sea: 'summer', t: '蝉在树上叫，声音大得盖过老师讲课。' },
+    { id: 'u3', sea: 'summer', t: '暴雨来得快去得也快，路上积水漫过鞋面。' },
+    { id: 'u4', sea: 'summer', t: '宿舍的空调成了硬通货，谁先回谁开。' },
+    { id: 'u5', sea: 'summer', t: '图书馆的冷气开得足，有人抱着外套进去。' },
+    { id: 'u6', sea: 'summer', t: '傍晚的操场全是人，散步的比跑步的多。' },
+    { id: 'u7', sea: 'summer', t: '西瓜五毛一斤，宿舍四个人买了两个，用勺子挖着吃。', e: { mood: 3, money: -10 } },
+
+    /* 通用 */
+    { id: 'g1', t: '开学第一周教室里坐满了人，第二周就空了一半。', y: 1 },
+    { id: 'g2', t: '校园卡丢了，补办要跑三个地方，你跑了两个下午。', e: { mood: -2, money: -20 } },
+    { id: 'g3', t: '辅导员在群里发了第三次安全提醒，没人回复。' },
+    { id: 'g4', t: '有人在宿舍楼下摆摊卖旧书，五块钱三本。', e: { mood: 1 } },
+    { id: 'g5', t: '食堂的菜价涨了五毛，阿姨说“没办法”。', e: { money: -15 } },
+    { id: 'g6', t: '学弟学妹问你路，你发现自己已经能指得很准。', y: 2, e: { mood: 2 } },
+    { id: 'g7', t: '班里开始有人提考研，图书馆的位置突然紧张了。', y: 3 },
+    { id: 'g8', t: '招聘信息贴在公告栏上，一张盖着一张。', y: 4 },
+    { id: 'g9', t: '毕业论文的开题报告改到第四版。', y: 4, e: { mood: -2 } },
+    { id: 'g10', t: '宿舍楼下堆起了纸箱，有人开始收拾行李。', y: 4 },
+    { id: 'g11', t: '教学楼换了新的电子屏，滚动播放着通知，没人看。' },
+    { id: 'g12', t: '快递驿站的队伍排到了马路上。', e: { mood: -1 } }
+  ];
+})(globalThis.GD);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  /* ============================================================
+     八种结局
+     ============================================================ */
+
+  GD.ENDINGS = {
+
+    burnout: {
+      key: 'burnout', title: '撑不住了', dest: '休学', seal: '休',
+      body: [
+        '你在一个再普通不过的周二下午，发现自己起不来床。不是困，是那种从骨头里往外渗的没力气。',
+        '辅导员来敲过门，室友把饭带回来放在桌上，你吃了两口。有几天你什么也没做，只是躺着看天花板，等天黑。',
+        '十一月，你办了休学。你妈来成都接你，在校门口那家面馆吃了一碗面。她说：“不急，慢慢来。”',
+        '这不是失败。你只是得先把自己捞回来。后来你回了学校，比很多人慢，但你还在路上。'
+      ],
+      line: '人生不是只有一条进度条。'
+    },
+
+    delay: {
+      key: 'delay', title: '延期毕业', dest: '延毕一年', seal: '延',
+      body: [
+        '答辩名单贴在学院楼下，你从上往下看了三遍，没有自己的名字。',
+        '三门课，两个学期，一道没过的坎。教务处的人很平静地告诉你流程，你也很平静地听完。',
+        '第二年春天，你一个人坐在空了一半的教室里重修。窗外是新生在军训，喊口号的声音和四年前一模一样。',
+        '你在六月拿到了毕业证，比别人晚一年。那天没拍毕业照，你自己在校门口吃了一碗面。'
+      ],
+      line: '有些路，要绕一下才走得通。'
+    },
+
+    baoyan: {
+      key: 'baoyan', title: '推免上岸', dest: '保送研究生', seal: '研',
+      body: [
+        '九月二十八号，推免系统开放。你按下“接受”的时候，手在抖。',
+        '三年六点起床的日子，一本翻烂的笔记，两次竞赛，一次在实验室通宵。它们在这一刻变成了一行字。',
+        '你妈在家庭群里发了三个感叹号，你爸只发了一个“好”。你知道那个“好”字，他打了很久。',
+        '第二年九月，你换了个城市，继续当学生。你偶尔会想起食堂的土豆，想起图书馆四楼那扇窗。'
+      ],
+      line: '你以为你在熬日子，其实在攒选择权。'
+    },
+
+    kaoyan: {
+      key: 'kaoyan', title: '考研上岸', dest: '录取为硕士研究生', seal: '考',
+      body: [
+        '三月三十一号下午，拟录取名单出来。你在宿舍楼下刷到自己的名字，第一反应是往上翻了一遍，确认没看错。',
+        '三百多天，两箱草稿纸，一个夏天没开空调的自习室。你把手机里那个“考研倒计时”的日程删了。',
+        '给家里打电话的时候，你妈先哭了一声，然后说“我就知道”。其实她不知道，你也不知道。',
+        '九月，你要去另一座城市。离开成都那天，地铁四号线很挤，你站着，一路没坐。'
+      ],
+      line: '你赌的那一把，赢了。'
+    },
+
+    kaogong: {
+      key: 'kaogong', title: '考公上岸', dest: '录用为公务员', seal: '公',
+      body: [
+        '面试成绩出来那天，你在出租屋的阳台上站了很久，楼下在卖糖油果子。',
+        '体检、政审、公示，每一道流程你都反复确认了三遍。你妈把公示链接转给了所有亲戚。',
+        '入职第一天，办公室的空调很冷，前辈递给你一个保温杯，说“慢慢就熟了”。',
+        '这份工作不会让你大富大贵，但它让你爸妈在饭桌上终于能接住别人的话。你知道这意味着什么。'
+      ],
+      line: '稳定不是没有野心，是换了一种野心。'
+    },
+
+    bigco: {
+      key: 'bigco', title: '拿到 offer', dest: '入职互联网公司', seal: '职',
+      body: [
+        '工牌挂在脖子上有点沉。入职那天你拍了张照片，没发朋友圈，只发给了你妈。',
+        '工位在一栋很高的楼里，窗外能看见另一栋更高的楼。你第一次知道“需求又变了”是什么语气。',
+        '工资比你想的高，房租也比你想的高。月底你算了一下，存下的钱和在学校时差不多。',
+        '加班到十一点的路上，你会想起后街那家烧烤摊。那时候你也熬夜，但至少是为一门课。'
+      ],
+      line: '你换了个地方继续赶 deadline。'
+    },
+
+    stable: {
+      key: 'stable', title: '签了', dest: '教师编 / 国企', seal: '签',
+      body: [
+        '你签了一份很稳的工作。说出去的时候，亲戚会点头，你妈会松一口气。',
+        '工资不高，但有编制、有食堂、有双休。你在单位附近租了个一居室，阳台上能晒到太阳。',
+        '第一年你常常觉得无聊，第二年你开始学着自己找事做，第三年你成了那个会带新人的前辈。',
+        '你没有成为很厉害的人，但你过得下去，而且过得还行。这件事比听起来要难。'
+      ],
+      line: '不是每一条路都要通向很远的地方。'
+    },
+
+    idle: {
+      key: 'idle', title: '还没定', dest: '待业 / 慢就业', seal: '待',
+      body: [
+        '六月，你搬出了宿舍。行李箱比四年前轻，因为你把很多东西都送人了。',
+        '考研差了十几分，省考没进面，秋招投的简历大多没有回音。你没有慌，只是有点空。',
+        '你在成都租了个小房子，白天投简历，晚上去跑步。有时候会路过学校，不进去，就在门口看一会儿。',
+        '第二年春天，你找到了一个不算理想但能开始的工作。回头看，那半年不是空白，是你在学着给自己交代。'
+      ],
+      line: '慢一点，不等于走错。'
+    }
+  };
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD;
+
+  var SEM = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下'];
+  var SEM_END = [
+    '第一个学期结束。你终于知道一食堂几点人最少。',
+    '大一下结束。成都的夏天来了，宿舍的空调开始整夜响。',
+    '大二上结束。你开始觉得，四年好像也没那么长。',
+    '大二下结束。你第一次在简历上写下了“项目经历”。',
+    '大三上结束。三条路选了一条，剩下的两条偶尔还会在梦里出现。',
+    '大三下结束。这个暑假之后，就只剩最后一年了。',
+    '大四上结束。日历翻到了最薄的那一页。',
+    '大四下结束。宿舍楼下的行李箱，一车一车地往外拉。'
+  ];
+  var KEYS = ['gpa', 'english', 'skill', 'network', 'fitness', 'mood', 'money', 'resume', 'prep', 'fail'];
+  var LABEL = {
+    gpa: '绩点', english: '英语', skill: '技能', network: '人脉', fitness: '体魄',
+    mood: '心情', money: '金钱', resume: '履历', prep: '备考', fail: '挂科'
+  };
+  var CLAMP = { gpa: [0, 4], english: [0, 100], skill: [0, 100], network: [0, 100], fitness: [0, 100], mood: [0, 100], resume: [0, 100], prep: [0, 100] };
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function jitter(v) { return v * (0.82 + Math.random() * 0.36); }
+  function deep(o) { return JSON.parse(JSON.stringify(o)); }
+
+  /* ---------------- 状态 ---------------- */
+
+  function newGame(o) {
+    o = o || {};
+    var mj = GD.MAJORS[o.major] ? o.major : 'cs';
+    var year = GD.YEARS.indexOf(o.year) >= 0 ? o.year : 2023;
+    var gender = 'm', i;
+    for (i = 0; i < GD.GENDERS.length; i++) if (GD.GENDERS[i].k === o.gender) gender = o.gender;
+
+    var prov = null, far = 2;
+    for (i = 0; i < GD.PROVINCES.length; i++) {
+      if (GD.PROVINCES[i][0] === o.prov) { prov = GD.PROVINCES[i]; far = GD.PROVINCES[i][3]; }
+    }
+    if (!prov) { prov = GD.PROVINCES[0]; far = 0; }
+
+    var allow = Math.round(Number(o.allow) || 1500);
+    allow = Math.max(GD.ALLOW_MIN, Math.min(GD.ALLOW_MAX, allow));
+
+    var s = {
+      name: (o.name || '').trim() || '李想',
+      major: mj,
+      cat: GD.MAJORS[mj].cat,
+      year: year, prov: prov[0], provName: prov[1], far: far,
+      food: prov[4], accent: prov[5], folk: prov[6],
+      allow: allow, gender: gender,
+      ch: 1, month: 1, energy: 100, slots: 6, attended: false, monthLog: [], summary: null,
+      absent: 0, fails: 0, retake: false, awards: [], comps: [],
+      vet: false, calJump: 0, debuff: 0, enlistChoice: null,
+      club: null, clubAct: 0, clubHonor: 0, thesis: 0, ledger: { in: 0, out: 0 },
+      seen: [], highlights: [],
+      gpa: 3.0, english: 40, skill: 20, network: 20, fitness: 60,
+      mood: 80, money: allow * 2, resume: 0, prep: 0, fail: 0,
+      direction: null, rom: 0, flags: {},
+      ended: null, scene: null, snapshot: null, lastAction: null
+    };
+    var b = GD.MAJORS[s.major].boost || {};
+    for (var k in b) s[k] = clamp(s[k] + b[k], 0, 100);
+
+    /* 离得越远，越孤单一点；四川本地的同学多 */
+    s.mood = clamp(s.mood + (2 - far * 2), 0, 100);
+    s.network = clamp(s.network + (4 - far * 2), 0, 100);
+
+    /* 生活费：手头紧的人心情低一点，宽裕的高一点 */
+    var am = allow < 900 ? -6 : allow < 1300 ? -3 : allow < 2000 ? 0 : allow < 3500 ? 3 : 5;
+    s.mood = clamp(s.mood + am, 0, 100);
+
+    s.scene = { kind: 'cover' };
+    return s;
+  }
+
+  /* ---------------- 数值结算 ---------------- */
+
+  function apply(s, eff) {
+    var out = [];
+    if (!eff) return out;
+    for (var k in eff) {
+      if (KEYS.indexOf(k) < 0) continue;
+      var v = eff[k], before = s[k];
+      var delta = (k === 'fail') ? v : jitter(v);
+      if (k === 'money') delta = Math.round(delta / 10) * 10;
+      else if (k === 'gpa') delta = Math.round(delta * 100) / 100;
+      else delta = Math.round(delta);
+      s[k] = s[k] + delta;
+      if (CLAMP[k]) s[k] = clamp(s[k], CLAMP[k][0], CLAMP[k][1]);
+      var real = Math.round((s[k] - before) * 100) / 100;
+      if (k === 'money' && real) {
+        s.ledger = s.ledger || { in: 0, out: 0 };
+        if (real > 0) s.ledger.in += real; else s.ledger.out -= real;
+      }
+      if (real !== 0) out.push({ k: k, label: LABEL[k], v: real });
+    }
+    return out;
+  }
+
+  function pickChoice(s, ch) {
+    var diff = apply(s, ch.e || {});
+    if (ch.set) s.direction = ch.set;
+    if (typeof ch.rom === 'number') s.rom = ch.rom;
+    if (ch.flag) s.flags[ch.flag] = true;
+    if (ch.log) s.highlights.push({ ch: s.ch, t: ch.log });
+    if (typeof ch.enlist === 'boolean') s.enlistChoice = ch.enlist;
+    if (typeof ch.club === 'string') {
+      s.club = (ch.club === 'none') ? null : ch.club;
+      s.clubAct = 0;
+    }
+    return diff;
+  }
+
+  /* ---------------- 事件池 ---------------- */
+
+  function mainOf(n) {
+    for (var i = 0; i < GD.EVENTS.length; i++) {
+      var e = GD.EVENTS[i];
+      if (e.main && e.ch[0] === n) return e;
+    }
+    return null;
+  }
+
+  function poolFor(s) {
+    return GD.EVENTS.filter(function (e) {
+      if (e.main) return false;
+      if (s.seen.indexOf(e.id) >= 0) return false;
+      if (s.ch < e.ch[0] || s.ch > e.ch[1]) return false;
+      if (e.major && e.major.indexOf(s.major) < 0) return false;
+      if (e.cat && e.cat !== s.cat) return false;
+      if (e.yearMax && s.year > e.yearMax) return false;
+      if (e.yearMin && s.year < e.yearMin) return false;
+      if (e.home && e.home.indexOf(s.home) < 0) return false;
+      if (e.farMin && s.far < e.farMin) return false;
+      if (e.prov && e.prov.indexOf(s.prov) < 0) return false;
+      if (e.dir && e.dir !== s.direction) return false;
+      if (e.rom && s.rom < e.rom) return false;
+      if (e.flag && !s.flags[e.flag]) return false;
+      if (e.noflag && s.flags[e.noflag]) return false;
+      return true;
+    });
+  }
+
+  /* 事件文案可以是字符串，也可以是随开局设定变化的函数 */
+  function textOf(e, s) {
+    return typeof e.text === 'function' ? e.text(s) : e.text;
+  }
+
+  function drawEvent(s) {
+    var pool = poolFor(s);
+    if (!pool.length) return null;
+    var total = 0, i;
+    for (i = 0; i < pool.length; i++) total += (pool[i].w || 1);
+    var r = Math.random() * total;
+    for (i = 0; i < pool.length; i++) {
+      r -= (pool[i].w || 1);
+      if (r <= 0) { s.seen.push(pool[i].id); return pool[i]; }
+    }
+    s.seen.push(pool[0].id);
+    return pool[0];
+  }
+
+  /* ---------------- 派生分 ---------------- */
+
+  function norm(s) { return s.gpa / 4 * 100; }
+
+  function scores(s) {
+    var T = GD.TUNE, g = norm(s);
+    var vb = s.vet ? 12 : 0;
+    return {
+      kaoyan: g * T.kaoyan.gpa + s.english * T.kaoyan.eng + s.prep * T.kaoyan.prep + s.mood * T.kaoyan.mood + vb,
+      kaogong: s.prep * T.kaogong.prep + s.skill * T.kaogong.skill + s.english * T.kaogong.eng + s.network * T.kaogong.net + s.mood * T.kaogong.mood + g * T.kaogong.gpa,
+      job: s.skill * T.job.skill + s.resume * T.job.resume + s.network * T.job.net + g * T.job.gpa
+    };
+  }
+
+  function evaluate(s, fin) {
+    var T = GD.TUNE, sc = fin || scores(s);
+    if (s.mood <= T.moodLine) return 'burnout';
+    if (s.fails >= T.failLimit) return 'delay';
+    /* 保研：没有挂科记录 + 综测 ≥97 + 校级及以上二等奖 ≥10 个 */
+    if (s.fails === 0 && s.awards.length >= GD.BAOYAN.awards &&
+        zongce(s) >= GD.BAOYAN.zongce &&
+        (s.direction === 'kaoyan' || !s.direction)) return 'baoyan';
+    if (s.direction === 'kaoyan' && sc.kaoyan >= T.kaoyan.need) return 'kaoyan';
+    if (s.direction === 'kaogong' && sc.kaogong >= T.kaogong.need) return 'kaogong';
+    if (sc.job >= T.job.need) return 'bigco';
+    if (sc.job >= T.stable.need) return 'stable';
+    return 'idle';
+  }
+
+  /* 临场发挥：复试 / 面试 / 运气，统一 ±9%（就业 ±6%） */
+  function luck(spread) {
+    return 1 - spread + Math.random() * spread * 2;
+  }
+
+  /* ---------------- 流程 ---------------- */
+
+  /* ---------------- 流程（按月推进） ---------------- */
+
+  var MONTHS = ['9 月', '10 月', '11 月', '12 月', '1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月'];
+
+  function monthLabel(s) {
+    var off = s.month - 1;
+    var num = (off + 8) % 12 + 1;
+    var y = s.year + Math.floor((off + 8) / 12) + (s.calJump || 0);
+    return y + ' 年 ' + num + ' 月';
+  }
+
+  function seasonOfM(m) {
+    if (m >= 9 && m <= 11) return 'autumn';
+    if (m === 12 || m <= 2) return 'winter';
+    if (m >= 3 && m <= 5) return 'spring';
+    return 'summer';
+  }
+
+  function pickMonthLine(s) {
+    var used = s.lines || (s.lines = {});
+    var sea = seasonOfM(naturalMonth(s));
+    var y = Math.ceil(s.month / 12);
+    function pool() {
+      return GD.MONTH_LINES.filter(function (l) {
+        if (used[l.id]) return false;
+        if (l.sea && l.sea !== sea) return false;
+        if (l.y && y < l.y) return false;
+        return true;
+      });
+    }
+    var p = pool();
+    if (!p.length) { s.lines = used = {}; p = pool(); }
+    if (!p.length) return null;
+    var one = p[Math.floor(Math.random() * p.length)];
+    used[one.id] = 1;
+    return one;
+  }
+
+  function beginMonth(s) {
+    if (s.month > 48) return finish(s);
+    s.ch = Math.ceil(s.month / 6);
+    /* 重修学期：两小时被重修课吃掉 */
+    if ((s.month - 1) % 6 === 0) s.retake = s.fails > 0;
+    s.slots = GD.MONTH_SLOTS;
+    if (s.debuff > 0) s.debuff -= 1;
+    var ml = pickMonthLine(s);
+    s.monthLine = ml ? ml.t : '';
+    if (ml && ml.e) apply(s, ml.e);
+    s.attended = false;
+    s.monthLog = [];
+    s.snapshot = deep({
+      name: s.name, major: s.major, cat: s.cat, ch: s.ch, month: s.month, energy: s.energy,
+      slots: s.slots, attended: s.attended, absent: s.absent,
+      fails: s.fails, retake: s.retake, awards: s.awards, comps: s.comps,
+      vet: s.vet, calJump: s.calJump, debuff: s.debuff,
+      monthLine: s.monthLine, lines: s.lines,
+      club: s.club, clubAct: s.clubAct, clubHonor: s.clubHonor,
+      seen: s.seen, highlights: s.highlights,
+      year: s.year, prov: s.prov, provName: s.provName, far: s.far,
+      food: s.food, accent: s.accent, folk: s.folk,
+      allow: s.allow, gender: s.gender,
+      gpa: s.gpa, english: s.english, skill: s.skill, network: s.network, fitness: s.fitness,
+      mood: s.mood, money: s.money, resume: s.resume, prep: s.prep, fail: s.fail,
+      direction: s.direction, rom: s.rom, flags: s.flags
+    });
+    save(s);
+
+
+    /* 每学期第一个月：主线事件 */
+    if (s.summary) {
+      s.scene = { kind: 'summary', data: s.summary };
+      s.summary = null;
+      return s;
+    }
+    if ((s.month - 1) % 6 === 0) {
+      var m = mainOf(s.ch);
+      if (m) {
+        s.scene = { kind: 'story', tag: 'main', title: m.title, text: textOf(m, s), choices: m.choices, month: monthLabel(s) };
+        return s;
+      }
+    }
+
+    /* 每年上学期首月：征兵（主线跑完再问） */
+    var en = maybeEnlist(s);
+    if (en) return en;
+    /* 平时三成概率遇到点事 */
+    if (Math.random() < 0.28) {
+      var e = drawEvent(s);
+      if (e) {
+        s.scene = { kind: 'story', tag: 'random', title: '这个月的某一天', text: textOf(e, s), choices: e.choices, month: monthLabel(s) };
+        return s;
+      }
+    }
+    return hubScene(s);
+  }
+
+  function afterStory(s) {
+    if (s.mood <= 0) return finish(s);
+    if (s.enlistChoice === true) { s.enlistChoice = null; return doEnlist(s); }
+    s.enlistChoice = null;
+    var en2 = maybeEnlist(s);
+    if (en2) return en2;
+    return hubScene(s);
+  }
+
+  function advanceMonth(s) {
+    s.month += 1;
+    if (s.month > 48) return finish(s);
+    s.energy = clamp(s.energy + GD.ENERGY_REGEN, 0, GD.ENERGY_MAX);
+    return beginMonth(s);
+  }
+
+  /* 玩家点「进入下个月」时调用 */
+  function endMonth(s) {
+    if (!s.attended) s.absent += 1;
+    s.summary = buildSummary(s);
+    if (s.month === 48) return defenseScene(s);
+    if (s.month % 6 === 0) return examScene(s);
+    return advanceMonth(s);
+  }
+
+  function buildSummary(s) {
+    var acts = s.monthLog.map(function (a) { return a.name; });
+    var lines = [];
+    if (!s.attended) lines.push('这个月没去上课，缺课累计 ' + s.absent + ' 次。');
+    if (s.absent >= 3) lines.push('缺课已经到一半，学期末这一门要挂。');
+    if (s.energy < 25) lines.push('精力快见底了，下个月最好先补一觉。');
+    if (s.mood < 30) lines.push('心情不太行，找点让自己开心的事做做。');
+    if (!acts.length) lines.push('这个月什么都没做。');
+    return {
+      month: monthLabel(s), acts: acts, lines: lines,
+      gpa: s.gpa, mood: Math.round(s.mood), energy: Math.round(s.energy)
+    };
+  }
+
+  /* ---------------- 自由探索：大类 → 地点 → 事项 → 时长 ---------------- */
+
+  function windowsFor(s) {
+    return GD.WINDOWS.filter(function (w) {
+      if (w.req === 'prep' && s.ch < 5) return false;
+      if (w.req === 'romance' && s.rom < 1) return false;
+      return true;
+    });
+  }
+
+  function hubScene(s) {
+    var ws = windowsFor(s).map(function (w) {
+      return { id: w.id, name: w.name, icon: w.icon, desc: w.desc, places: w.places.length };
+    });
+    s.scene = {
+      kind: 'hub', windows: ws, title: monthLabel(s),
+      energy: Math.round(s.energy), sub: SEM[s.ch - 1],
+      hours: s.slots, attended: s.attended, retake: s.retake, line: s.monthLine || '',
+      slots: s.slots, courses: coursesOf(s), classSlots: classSlots(s),
+      course: coursesOf(s)[0],
+      comps: openComps(s).length
+    };
+    return s;
+  }
+
+  function placeScene(s, winId) {
+    var w = GD.WIN[winId];
+    var ps = w.places.map(function (p) { return { id: p.id, name: p.name, note: p.note, items: p.items.length }; });
+    s.scene = { kind: 'place', winId: winId, winName: w.name, places: ps, title: monthLabel(s), energy: Math.round(s.energy) };
+    return s;
+  }
+
+  function itemScene(s, winId, placeId) {
+    var w = GD.WIN[winId], p = w.placeMap[placeId];
+    var its = p.items.filter(function (it) { return !it[4] || it[4](s); }).map(function (it) {
+      return { id: it.id, name: it.name, cost: GD.ITEM_COST[it.id] || 12, fix: GD.ITEM_FIX[it.id] || 0, pay: (it.eff.money || 0) };
+    });
+    s.scene = {
+      kind: 'item', winId: winId, placeId: placeId, winName: w.name, placeName: p.name,
+      title: monthLabel(s), items: its, energy: Math.round(s.energy)
+    };
+    return s;
+  }
+
+  function durScene(s, winId, placeId, itemId) {
+    var w = GD.WIN[winId], p = w.placeMap[placeId], it = p.itemMap[itemId];
+    var base = GD.ITEM_COST[it.id] || 12;
+    var opts = GD.DUR.map(function (d) {
+      return {
+        m: d.m, label: d.label, note: d.note,
+        cost: Math.round(base * d.cost), hours: d.hours,
+        recover: base < 0
+      };
+    });
+    s.scene = {
+      kind: 'dur', winId: winId, placeId: placeId, itemId: itemId,
+      itemName: it.name, placeName: p.name, winName: w.name,
+      title: monthLabel(s), opts: opts, energy: Math.round(s.energy)
+    };
+    return s;
+  }
+
+  function useItem(s, winId, placeId, itemId, durIdx) {
+    var w = GD.WIN[winId], p = w.placeMap[placeId], it = p.itemMap[itemId];
+    var d = GD.DUR[durIdx] || GD.DUR[1];
+    /* 时间块不够就做不了 */
+    if (s.slots < d.slots) {
+      s.scene = {
+        kind: 'effect', returnHub: true,
+        text: '这个月只剩 ' + s.slots + ' 块时间了，做不了这件事。要不先「进入下个月」？',
+        diff: [], energy: Math.round(s.energy),
+        winId: winId, placeId: placeId, itemId: it.id,
+        winName: w.name, placeName: p.name, itemName: it.name, hours: 0
+      };
+      return s;
+    }
+    s.slots -= d.slots;
+    s.monthLog.push({ name: it.name });
+    var tired = s.energy < 15 ? 0.7 : 1;
+    var rusty = (s.debuff > 0 && (winId === 'study' || winId === 'prep')) ? 0.6 : 1;
+    var k = d.eff * GD.BASE_SCALE * tired * rusty;
+
+    var eff = {};
+    for (var key in it.eff) {
+      if (key === 'gpa') eff[key] = it.eff[key] * k;
+      else eff[key] = Math.round(it.eff[key] * k);
+    }
+    if (d.m === 3) eff.mood = (eff.mood || 0) + GD.LONG_MOOD;
+
+    var diff = apply(s, eff);
+    if (typeof it.eff.rom === 'number') s.rom = Math.min(4, s.rom + it.eff.rom);
+
+    /* 社团活跃度：参加活动和当负责人都在攒 */
+    if (winId === 'study' || winId === 'prep') s.semStudy = (s.semStudy || 0) + 1;
+    if (it.id === 'thesis') s.thesis = clamp((s.thesis || 0) + 12, 0, 100);
+    if (s.club && (it.id === 'join' || it.id === 'lead')) {
+      var add = it.id === 'lead' ? 16 : 9;
+      s.clubAct = clamp(s.clubAct + add, 0, 100);
+      diff.push({ k: 'club', label: '社团', v: add });
+    }
+
+    /* 老乡会对离家远的人格外有用 */
+    if (it.id === 'meet' && s.far > 0) {
+      var before = s.mood;
+      s.mood = clamp(s.mood + s.far, 0, 100);
+      var gain = s.mood - before;
+      if (gain > 0) diff.push({ k: 'mood', label: '心情', v: gain });
+    }
+
+    /* 精力 */
+    var base = GD.ITEM_COST[it.id] || 12;
+    var e0 = s.energy;
+    s.energy = clamp(s.energy - Math.round(base * d.cost), 0, GD.ENERGY_MAX);
+    var eDelta = Math.round(s.energy - e0);
+    if (eDelta !== 0) diff.push({ k: 'energy', label: '精力', v: eDelta });
+    if (s.energy <= 0 && eDelta < 0) {
+      s.mood = clamp(s.mood - 2, 0, 100);
+      diff.push({ k: 'mood', label: '心情', v: -2 });
+    }
+
+    s.lastAction = { name: it.name, diff: diff };
+    if (s.mood <= 0) return finish(s);
+    s.scene = {
+      kind: 'effect', text: it.r + (GD.reactLine ? ' ' + GD.reactLine(winId, s) : ''), diff: diff, energy: Math.round(s.energy),
+      winId: winId, placeId: placeId, itemId: it.id,
+      winName: w.name, placeName: p.name, itemName: it.name, hours: d.hours,
+      monthEnd: (s.month % 6 === 0)
+    };
+    return s;
+  }
+
+  /* ---------------- 上课 / 竞赛 / 综测 ---------------- */
+
+  function naturalMonth(s) { return (s.month - 1 + 8) % 12 + 1; }
+
+  function collegeKeyOf(s) {
+    var m = GD.MAJORS[s.major];
+    return m ? m.collegeKey : 'cs';
+  }
+
+  function coursesOf(s) {
+    var pool = GD.COURSES[collegeKeyOf(s)] || ['专业课'];
+    var n = GD.SEM_COURSE_COUNT[s.ch - 1] || 3;
+    if (s.ch === 7) return ['就业指导'];
+    if (s.ch === 8) return ['毕业设计'];
+    var yr = Math.min(4, Math.ceil(s.ch / 2));
+    var pub = GD.PUBLIC[yr] || [];
+    var list = pub.slice(0, Math.min(2, n, pub.length));
+    while (list.length < n) list.push(pool[(s.ch * 2 + list.length) % pool.length]);
+    return list;
+  }
+
+  function classSlots(s) { return GD.CLASS_SLOTS[s.ch - 1] || 2; }
+
+  function attendClass(s) {
+    if (s.attended) return hubScene(s);
+    var cost = classSlots(s);
+    if (s.slots < cost) return hubScene(s);
+    var cs = coursesOf(s);
+    s.slots -= cost;
+    s.attended = true;
+    var d = apply(s, { gpa: 0.006 });
+    var e0 = s.energy;
+    s.energy = clamp(s.energy - 6, 0, GD.ENERGY_MAX);
+    d.push({ k: 'energy', label: '精力', v: Math.round(s.energy - e0) });
+    s.monthLog.push({ name: '上课' });
+    s.scene = {
+      kind: 'effect', returnHub: true,
+      text: '你去上了本学期的课：' + cs.join('、') + '。' +
+        (s.retake ? '重修班的老师点到了你的名字。' : '点名点到你的时候，你答得很大声。'),
+      diff: d, energy: Math.round(s.energy),
+      winName: '上课', placeName: cs.join('、'), itemName: '本月课程', hours: cost
+    };
+    return s;
+  }
+
+  function myAbility(s, need) {
+    return need.k === 'gpa' ? s.gpa / 4 * 100 : (s[need.k] || 0);
+  }
+
+  function openComps(s) {
+    var mm = naturalMonth(s), taken = {};
+    s.comps.forEach(function (c) { taken[c.id] = 1; });
+    return GD.COMPS.filter(function (c) {
+      return c.months.indexOf(mm) >= 0 && !taken[c.id];
+    });
+  }
+
+  function compScene(s) {
+    var list = openComps(s).map(function (c) {
+      return {
+        id: c.id, name: c.name, level: c.level, hours: c.hours, energy: c.energy, fee: c.fee,
+        slots: c.level === 1 ? 1 : c.level === 2 ? 2 : 3,
+        levelName: c.level === 1 ? '校级' : c.level === 2 ? '省级' : '国家级',
+        needLabel: c.need.label, needReq: c.need.req, my: Math.round(myAbility(s, c.need))
+      };
+    });
+    s.scene = {
+      kind: 'comp', title: monthLabel(s), list: list,
+      slots: s.slots, energy: Math.round(s.energy)
+    };
+    return s;
+  }
+
+  function runComp(s, compId) {
+    var c = null;
+    GD.COMPS.forEach(function (x) { if (x.id === compId) c = x; });
+    if (!c) return hubScene(s);
+    var need = c.level === 1 ? 1 : c.level === 2 ? 2 : 3;
+    if (s.slots < need || s.energy < c.energy) {
+      s.comps.push({ id: c.id, name: c.name, level: c.level, prize: '', month: s.month });
+      s.scene = {
+        kind: 'effect', returnHub: true,
+        text: '你算了一下：这个比赛要 ' + need + ' 块时间、' + c.energy + ' 点精力，你这个月不够。',
+        diff: [], energy: Math.round(s.energy),
+        winName: '竞赛', placeName: c.name, itemName: '报名', hours: 0
+      };
+      return s;
+    }
+    s.slots -= need;
+    s.monthLog.push({ name: c.name });
+    var e0 = s.energy;
+    s.energy = clamp(s.energy - c.energy, 0, GD.ENERGY_MAX);
+    s.money -= c.fee;
+
+    /* 能力越接近要求越稳，但能力不够也有 12% 的底子 */
+    var my = myAbility(s, c.need);
+    var ratio = Math.max(0, Math.min(1.4, my / c.need.req));
+    var lvK = c.level === 3 ? 0.78 : c.level === 2 ? 0.9 : 1.05;
+    var p = Math.min(0.94, (0.20 + 0.58 * ratio) * lvK);
+    var roll = Math.random();
+    var prize = roll < p * 0.2 ? '一等' : roll < p * 0.6 ? '二等' : roll < p ? '三等' : '';
+
+    var d = [{ k: 'energy', label: '精力', v: Math.round(s.energy - e0) }];
+    if (c.fee) d.push({ k: 'money', label: '金钱', v: -c.fee });
+
+    var text;
+    if (prize) {
+      var rGain = c.level === 3 ? 8 : c.level === 2 ? 5 : 3;
+      var b0 = s.resume;
+      s.resume = clamp(s.resume + rGain, 0, 100);
+      d.push({ k: 'resume', label: '履历', v: Math.round(s.resume - b0) });
+      s.comps.push({ id: c.id, name: c.name, level: c.level, prize: prize, month: s.month });
+      if (prize !== '三等') {
+        s.awards.push({ id: c.id, name: c.name, level: c.level, prize: prize, month: s.month });
+        s.highlights.push({ ch: s.ch, t: '你拿了' + c.name + '的' + prize + '等奖' });
+      }
+      text = '你代表学校参加了' + c.name + '，拿了' + prize + '等奖。证书发下来那天，你把它夹进了专业课的书里。';
+    } else {
+      s.comps.push({ id: c.id, name: c.name, level: c.level, prize: '', month: s.month });
+      var m0 = s.mood;
+      s.mood = clamp(s.mood - 3, 0, 100);
+      d.push({ k: 'mood', label: '心情', v: Math.round(s.mood - m0) });
+      text = '你在' + c.name + '里没拿到名次。评委的评语很客气，但意思很清楚。';
+    }
+
+    s.scene = {
+      kind: 'effect', returnHub: true, text: text, diff: d,
+      energy: Math.round(s.energy), winName: '竞赛', placeName: c.name,
+      itemName: '参赛', hours: c.hours
+    };
+    return s;
+  }
+
+  function zongce(s) {
+    var g = s.gpa / 4 * 100;
+    var aw = Math.min(s.awards.length * 2.5, 30);
+    var r = Math.min(s.resume, 100) * 0.2;
+    var vet = s.vet ? 10 : 0;
+    var ch = (s.clubHonor || 0) * GD.CLUB_HONOR.zongce;
+    return Math.min(100, g * 0.6 + aw + r + vet + ch);
+  }
+
+  var ENLIST_MONTHS = [1, 13, 25, 37];   /* 大一上 / 大二上 / 大三上 / 大四上 的第一个月 */
+
+  function maybeEnlist(s) {
+    if (s.vet) return null;
+    if (ENLIST_MONTHS.indexOf(s.month) < 0) return null;
+    var key = 'enlist_' + s.month;
+    if (s.flags[key]) return null;
+    s.flags[key] = true;
+    var grade = ['大一', '大二', '大三', '大四'][ENLIST_MONTHS.indexOf(s.month)];
+    s.scene = {
+      kind: 'story', tag: 'enlist', title: '征兵宣传',
+      text: '九月，学校的征兵宣传车又停在食堂门口了，横幅上写着“大学生应征入伍，保留学籍，退伍复学”。\n\n' +
+        '辅导员在班群里发通知：服役两年，学费全免，退伍后可以重新选专业，考研还有专项计划。\n\n' +
+        '你现在是' + grade + '。你把通知看了三遍。',
+      choices: [
+        { t: '报名参军，去部队待两年', e: { mood: 2 },
+          r: '你在报名表上签了字。体检、政审、公示，一切都比你想的快。',
+          enlist: true, log: grade + '，你报名参了军' },
+        { t: '不去，把书读完', e: { mood: 3 },
+          r: '你把通知划走了。第二天横幅还在，你已经不看它了。', enlist: false }
+      ]
+    };
+    return s;
+  }
+
+  function doEnlist(s) {
+    s.vet = true;
+    s.calJump = 2;
+    s.money += 25000;
+    s.gpa = Math.max(0, Math.round((s.gpa - 0.25) * 100) / 100);
+    s.english = clamp(s.english - 10, 0, 100);
+    s.skill = clamp(s.skill - 10, 0, 100);
+    s.resume = clamp(s.resume + 15, 0, 100);
+    s.fitness = clamp(s.fitness + 15, 0, 100);
+    s.mood = clamp(s.mood + 6, 0, 100);
+    s.debuff = 3;
+    s.highlights.push({ ch: s.ch, t: '你去当了两年兵，然后回来了' });
+    s.scene = {
+      kind: 'vet', title: '两年后',
+      text: '两年。你站过凌晨四点的岗，跑过五公里越野，也学会了在二十分钟内把被子叠成豆腐块。\n\n' +
+        '退伍那天，指导员把退伍证递给你，说“回去吧，好好读”。\n\n' +
+        '你回到学校，学籍还在，宿舍换了人。退伍费到账：¥25,000。学费全免，学校给你重新选专业的机会。\n\n' +
+        '只是你翻开课本的时候发现，大二学的东西，一个字都不记得了。'
+    };
+    return s;
+  }
+
+  function remajorScene(s, step, colKey) {
+    if (step === 1) {
+      s.scene = {
+        kind: 'remajor', step: 1, title: '复学 · 重新选专业',
+        text: '你可以重新选一个专业。',
+        list: GD.COLLEGES.map(function (c) {
+          return { key: c.key, name: c.name, note: c.majors.length + ' 个专业' };
+        })
+      };
+      return s;
+    }
+    var col = null;
+    GD.COLLEGES.forEach(function (c) { if (c.key === colKey) col = c; });
+    s.scene = {
+      kind: 'remajor', step: 2, title: col.name, colKey: colKey,
+      text: '选一个你想读的。',
+      list: col.majors.map(function (m) {
+        var d = GD.MAJORS[m[0]];
+        return { key: m[0], name: d.name, note: d.tag || '' };
+      })
+    };
+    return s;
+  }
+
+  function defenseScene(s) {
+    var t = s.thesis || 0;
+    var g = s.gpa / 4 * 100;
+    var score = Math.round(t * 0.62 + g * 0.22 + 12 + (Math.random() * 12 - 6));
+    score = clamp(score, 20, 100);
+    var verdict = score >= 85 ? '优秀' : score >= 60 ? '通过' : '不通过';
+    s.scene = { kind: 'defense', score: score, verdict: verdict, thesis: t };
+    return s;
+  }
+
+  function examScene(s) {
+    var seen = {}, list = [];
+    coursesOf(s).forEach(function (c) {
+      var nm = (typeof c === 'string') ? c : (c.name || c.course || '课程');
+      if (seen[nm]) return;
+      seen[nm] = 1;
+      list.push(c);
+    });
+    list = list.slice(0, 4);
+    var absent = s.absent || 0;
+    var study = s.semStudy || 0;
+    var g = s.gpa / 4 * 100;
+    var rows = list.map(function (c) {
+      var nm = (typeof c === 'string') ? c : (c.name || c.course || '课程');
+      var base = 38 + g * 0.32 + Math.min(study, 16) * 1.4 + (s.attended ? 6 : -6) - Math.min(absent, 4) * 5;
+      var sc = Math.round(base + (Math.random() * 16 - 8));
+      sc = clamp(sc, 0, 100);
+      return { name: nm, score: sc, grade: sc >= 90 ? '优' : sc >= 80 ? '良' : sc >= 70 ? '中' : sc >= 60 ? '及格' : '不及格' };
+    });
+    var sum = 0;
+    rows.forEach(function (r) { sum += r.score; });
+    var avg = Math.round(sum / Math.max(1, rows.length));
+    var fails = rows.filter(function (r) { return r.score < 60; }).length;
+    var total = 42;
+    var rank = Math.round(total * (1 - (avg - 45) / 55));
+    rank = clamp(rank, 1, total);
+    var note = absent >= 3 ? '你有几门课几乎没去过。' : absent > 0 ? '你缺过 ' + absent + ' 次课。' : '这个学期你一节没缺。';
+    s.exam = { avg: avg, fails: fails, rank: rank, total: total };
+    s.scene = {
+      kind: 'exam', sem: s.ch, rows: rows, avg: avg, rank: rank, total: total,
+      fails: fails, note: note
+    };
+    return s;
+  }
+
+  function settleScene(s) {
+    var notes = [], lines = [];
+    /* 缺课达 1/3（一学期 6 个月，缺 2 个月即算） */
+    /* 学年末评十佳社团 */
+    if (s.month % 12 === 0 && s.club && s.clubAct >= GD.CLUB_HONOR.need) {
+      s.clubHonor += 1;
+      s.resume = clamp(s.resume + GD.CLUB_HONOR.resume, 0, 100);
+      lines.push('你们社团评上了这一学年的“十佳学生社团”。颁奖那天你在台下鼓掌，手都拍红了。');
+      s.highlights.push({ ch: s.ch, t: '你所在的' + GD.CLUBS[s.club].name + '评上了十佳社团' });
+      s.clubAct = Math.round(s.clubAct * 0.5);
+    } else if (s.month % 12 === 0 && s.club) {
+      s.clubAct = Math.round(s.clubAct * 0.5);
+    }
+
+    var wasRetake = s.retake;
+    s.semStudy = 0;
+    if (s.absent >= 3) {
+      s.fails += 1;
+      s.retake = true;
+      notes.push('这个学期缺了 ' + s.absent + ' 个月的课，' +
+        (wasRetake ? '重修没过，下学期还得再来一次。' : '挂了一门，下学期要重修。'));
+    } else if (wasRetake) {
+      s.retake = false;
+      lines.push('重修通过了。挂科的记录还在，但这门课总算过了。');
+    }
+    s.absent = 0;
+    s.mood = clamp(s.mood + 4, 0, 100);
+    s.money += s.allow;
+    s.ledger = s.ledger || { in: 0, out: 0 };
+    s.ledger.in += s.allow;
+    if (s.vet) { s.money += 800; s.ledger.in += 800; }
+
+    var T = GD.FAR_TRAIT[s.far] || GD.FAR_TRAIT[2];
+    s.money -= T.travel;
+    s.mood = clamp(s.mood + T.homeMood, 0, 100);
+    if (T.travel > 0) {
+      lines.push('放了个假，来回一趟' + (s.far >= 2 ? '路上折腾' : '车票') + '花了 ¥' + T.travel + '。');
+    }
+    if (T.homeMood > 0) {
+      lines.push('你在家待了几天，走的时候家里人往包里塞了不少东西。');
+    } else if (T.homeMood < 0) {
+      lines.push('你没有回家。宿舍楼下比平时安静很多。');
+    }
+
+    if (s.mood <= 0) return finish(s);
+    s.scene = {
+      kind: 'settle', title: SEM[s.ch - 1] + ' · 学期结束',
+      text: SEM_END[s.ch - 1], notes: notes, lines: lines, ch: s.ch
+    };
+    return s;
+  }
+
+  function finish(s) {
+    var raw = scores(s);
+    var fin = {
+      kaoyan: raw.kaoyan * luck(0.09),
+      kaogong: raw.kaogong * luck(0.09),
+      job: raw.job * luck(0.06)
+    };
+    s.ended = evaluate(s, fin);
+    s.scene = { kind: 'end', key: s.ended, scores: fin };
+    try { localStorage.removeItem('rcu4.save'); } catch (e) {}
+    return s;
+  }
+
+  /* ---------------- 交互入口 ---------------- */
+
+  function pick(s, i) {
+    var sc = s.scene;
+    if (!sc || !sc.kind) return hubScene(s);
+    if (sc.kind === 'story') {
+      var ch = sc.choices[i];
+      if (!ch) return s;
+      var diff = pickChoice(s, ch);
+      s.scene = { kind: 'result', text: ch.r, diff: diff, tag: sc.tag, source: sc };
+      return s;
+    }
+    if (sc.kind === 'result') {
+      var src = s.scene.source;
+      s.scene = src;
+      return afterStory(s);
+    }
+    if (sc.kind === 'hub') {
+      var w = sc.windows[i];
+      if (!w) return s;
+      return placeScene(s, w.id);
+    }
+    if (sc.kind === 'place') {
+      var p = sc.places[i];
+      if (!p) return s;
+      return itemScene(s, sc.winId, p.id);
+    }
+    if (sc.kind === 'item') {
+      var it = sc.items[i];
+      if (!it) return s;
+      if (it.fix) return useItem(s, sc.winId, sc.placeId, it.id, it.fix - 1);
+      return durScene(s, sc.winId, sc.placeId, it.id);
+    }
+    if (sc.kind === 'dur') {
+      if (!sc.opts[i]) return s;
+      return useItem(s, sc.winId, sc.placeId, sc.itemId, i);
+    }
+    if (sc.kind === 'comp') {
+      var cp = sc.list[i];
+      if (!cp) return s;
+      return runComp(s, cp.id);
+    }
+    if (sc.kind === 'effect') {
+      return hubScene(s);
+    }
+    if (sc.kind === 'defense') {
+      if (sc.verdict === '不通过') {
+        s.fails += 2;
+        s.mood = clamp(s.mood - 12, 0, 100);
+      } else if (sc.verdict === '优秀') {
+        s.resume = clamp(s.resume + 6, 0, 100);
+        s.mood = clamp(s.mood + 6, 0, 100);
+      } else {
+        s.mood = clamp(s.mood + 2, 0, 100);
+      }
+      return settleScene(s);
+    }
+    if (sc.kind === 'exam') {
+      var ex = s.exam || {};
+      s.gpa = clamp(Math.round((s.gpa + (ex.avg - 78) / 100 * 0.14) * 100) / 100, 0, 4);
+      if (ex.avg >= 85) s.mood = clamp(s.mood + 4, 0, 100);
+      else if (ex.avg < 60) s.mood = clamp(s.mood - 8, 0, 100);
+      if (ex.fails >= 2) s.fails += 1;
+      if (ex.avg >= 85) s.resume = clamp(s.resume + 1, 0, 100);
+      return settleScene(s);
+    }
+    if (sc.kind === 'vet') return remajorScene(s, 1);
+    if (sc.kind === 'remajor') {
+      var opt = sc.list[i];
+      if (!opt) return s;
+      if (sc.step === 1) return remajorScene(s, 2, opt.key);
+      s.major = opt.key;
+      s.cat = GD.MAJORS[opt.key].cat;
+      s.highlights.push({ ch: s.ch, t: '复学后你转到了' + GD.MAJORS[opt.key].name });
+      return hubScene(s);
+    }
+    if (sc.kind === 'summary') return beginMonth(s);
+    if (sc.kind === 'settle') return advanceMonth(s);
+    return hubScene(s);
+  }
+
+  /* 返回上一层，不消耗精力 */
+  function navBack(s) {
+    var sc = s.scene;
+    if (sc.kind === 'place') return hubScene(s);
+    if (sc.kind === 'item') return placeScene(s, sc.winId);
+    if (sc.kind === 'dur') return itemScene(s, sc.winId, sc.placeId);
+    if (sc.kind === 'comp') return hubScene(s);
+    return s;
+  }
+
+  /* ---------------- 存档 ---------------- */
+
+  var SAVE_KEY = 'rcu4.save';
+
+  function save(s) {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, snap: s.snapshot }));
+    } catch (e) {}
+  }
+
+  function hasSave() {
+    try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; }
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || !o.snap) return null;
+      var s = o.snap;
+      s.seen = s.seen || [];
+      s.highlights = s.highlights || [];
+      s.flags = s.flags || {};
+      if (!s.prov) { s.prov = 'sc'; s.provName = '四川'; s.far = 0; }
+      if (!s.allow) s.allow = 1500;
+      if (!s.month) s.month = 1;
+      if (typeof s.energy !== 'number') s.energy = 100;
+      s.scene = { kind: 'cover' };
+      return beginMonth(s);
+    } catch (e) { return null; }
+  }
+
+  function clear() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  }
+
+  g.RCU = {
+    SEM: SEM, LABEL: LABEL,
+    newGame: newGame, beginMonth: beginMonth, pick: pick, endMonth: endMonth, navBack: navBack,
+    monthLabel: monthLabel, attendClass: attendClass, compScene: compScene, runComp: runComp,
+    zongce: zongce, naturalMonth: naturalMonth,
+    hasSave: hasSave, load: load, clear: clear,
+    evaluate: evaluate, scores: scores, norm: norm
+  };
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function (g) {
+  'use strict';
+  var GD = g.GD, E = g.RCU;
+  var root = document.getElementById('app');
+  var S = null;
+  var setup = { step: 0, name: '', gender: 'm', year: 2023, prov: 'sc', allow: 1500, college: null, major: null };
+
+  function esc(t) {
+    var s = String(t);
+    if (S) {
+      if (S.gender) s = s.replace(/\{P\}/g, GD.PARTNER[S.gender] || 'TA');
+      s = s.replace(/\{PROV\}/g, S.provName || '')
+        .replace(/\{FOOD\}/g, S.food || '')
+        .replace(/\{ACCENT\}/g, S.accent || '')
+        .replace(/\{FOLK\}/g, S.folk || '');
+    }
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function cnYear(y) {
+    var d = '〇一二三四五六七八九';
+    return String(y).split('').map(function (c) { return d[+c]; }).join('');
+  }
+  function paras(t) {
+    return String(t).split(/\n\n+/).map(function (p) {
+      return '<p>' + esc(p) + '</p>';
+    }).join('');
+  }
+  function el(html) {
+    var d = document.createElement('div');
+    d.innerHTML = html.trim();
+    return d.firstElementChild;
+  }
+
+  /* ---------------- HUD ---------------- */
+
+  function hudHTML() {
+    var items = [
+      ['绩点', S.gpa.toFixed(2)],
+      ['英语', S.english],
+      ['技能', S.skill],
+      ['人脉', S.network],
+      ['体魄', S.fitness],
+      ['心情', S.mood],
+      ['金钱', '¥' + S.money],
+      ['履历', S.resume]
+    ];
+    if (S.ch >= 5) items.push(['备考', S.prep]);
+    items.push(['综测', Math.round(E.zongce(S))]);
+    if (S.club) items.push(['社团', S.clubAct]);
+    items.push(['竞赛', S.awards.length]);
+    if (S.fails > 0) items.push(['挂科', S.fails]);
+    var dir = '';
+    if (S.direction === 'kaoyan') dir = '<span class="dir dir-k">考研</span>';
+    if (S.direction === 'kaogong') dir = '<span class="dir dir-g">考公</span>';
+    if (S.direction === 'job') dir = '<span class="dir dir-j">就业</span>';
+
+    var dots = '';
+    for (var i = 1; i <= 8; i++) {
+      dots += '<i class="' + (i < S.ch ? 'done' : (i === S.ch ? 'now' : '')) + '"></i>';
+    }
+
+    return '<div class="hud">' +
+      '<div class="hud-top"><span class="sem">' + E.SEM[Math.min(S.ch, 8) - 1] + '</span>' + '<span class="pg">第 ' + (S.month || 1) + ' / 48 页</span>' +
+      '<span class="bgm" id="bgmBtn" data-act="bgm">' + (BGM_ON ? '♪' : '✕') + '</span>' +
+      '<span class="dots">' + dots + '</span>' + dir + '</div>' +
+      '<div class="stats">' +
+      items.map(function (it) { return '<span class="chip">' + it[0] + '<b>' + it[1] + '</b></span>'; }).join('') +
+      '</div></div>';
+  }
+
+  /* ---------------- 视图 ---------------- */
+
+  function coverView() {
+    return '<div class="cover">' +
+      '<div class="kicker">一款关于四年的文字游戏</div>' +
+      '<h1>毕业那天<br><em>你会去哪</em></h1>' +
+      '<p class="cover-sub">八个学期，二十四次行动。<br>推开学、玩、生活、社交、实践的窗，<br>每一扇后面都是你自己选的。</p>' +
+      '<button class="btn primary" data-act="new">开始这四年</button>' +
+      (E.hasSave() ? '<button class="btn ghost" data-act="resume">继续上次</button>' : '') +
+      '<p class="tiny">虚构作品 · 校名、院系、人物均属虚构<br>约 12 分钟一局 · 支持手机</p>' +
+      '</div>';
+  }
+
+  function collegeByKey(k) {
+    for (var i = 0; i < GD.COLLEGES.length; i++) if (GD.COLLEGES[i].key === k) return GD.COLLEGES[i];
+    return null;
+  }
+
+  function optChip(group, val, main, note, on) {
+    return '<button class="opt' + (on ? ' on' : '') + '" data-act="opt" data-group="' + group + '" data-v="' + val + '">' +
+      '<span class="o-main">' + esc(main) + '</span>' +
+      (note ? '<span class="o-note">' + esc(note) + '</span>' : '') +
+      '</button>';
+  }
+
+  function provHintText() {
+    for (var i = 0; i < GD.PROVINCES.length; i++) {
+      if (GD.PROVINCES[i][0] === setup.prov) {
+        var p = GD.PROVINCES[i];
+        return p[1] + ' · ' + (GD.FAR_TRAIT_HINT[p[3]] || '');
+      }
+    }
+    return '';
+  }
+
+  function provincePicker() {
+    return GD.REGIONS.map(function (r) {
+      var chips = GD.PROVINCES.filter(function (p) { return p[2] === r.k; }).map(function (p) {
+        return '<button class="prov' + (setup.prov === p[0] ? ' on' : '') + '" data-act="opt" data-group="p" data-v="' + p[0] + '">' + p[1] + '</button>';
+      }).join('');
+      return '<div class="rgroup"><span class="rname">' + r.name + '</span><div class="pgrid">' + chips + '</div></div>';
+    }).join('');
+  }
+
+  function setupView() {
+    if (setup.step === 0) {
+      var g = GD.GENDERS.map(function (x) { return optChip('g', x.k, x.name, '', setup.gender === x.k); }).join('');
+      var y = GD.YEARS.map(function (x) { return optChip('y', x, x, (x + 4) + ' 届', setup.year === x); }).join('');
+      return '<div class="setup">' +
+        '<div class="kicker">' + cnYear(setup.year) + ' 年，九月</div>' +
+        '<h2 class="q">你叫什么？</h2>' +
+        '<input id="nameInput" class="name-input" maxlength="8" placeholder="李想" value="' + esc(setup.name) + '">' +
+        '<h2 class="q">你是</h2><div class="opts">' + g + '</div>' +
+        '<h2 class="q">哪一年入学</h2><div class="opts yr">' + y + '</div>' +
+        '<p class="hint" id="gradHint">你会在 ' + (setup.year + 4) + ' 年 6 月毕业。</p>' +
+        '<h2 class="q">你来自</h2>' +
+        '<div class="provs">' + provincePicker() + '</div>' +
+        '<p class="hint" id="provHint">' + esc(provHintText()) + '</p>' +
+        '<h2 class="q">每月生活费</h2>' +
+        '<div class="allow-row">' +
+        '<span class="allow-yen">¥</span>' +
+        '<input id="allowInput" class="allow-input" type="number" min="' + GD.ALLOW_MIN + '" max="' + GD.ALLOW_MAX + '" step="100" value="' + setup.allow + '">' +
+        '<span class="allow-unit">/ 月</span>' +
+        '</div>' +
+        '<p class="hint" id="allowHint">开局 ¥' + (setup.allow * 2) + '，之后每学期家里再打一个月。' +
+        '（' + GD.ALLOW_MIN + '–' + GD.ALLOW_MAX + ' 元，可以自己填）</p>' +
+        '<button class="btn primary" data-act="toCollege">下一步 · 选学院</button>' +
+        '<p class="tiny">依据成都大学 20 个学院、' + GD.MAJOR_ORDER.length + ' 个本科专业设置。</p>' +
+        '</div>';
+    }
+
+    if (setup.step === 1) {
+      var cards = GD.COLLEGES.map(function (c) {
+        return '<button class="col" data-act="col" data-k="' + c.key + '">' +
+          '<span class="m-name">' + esc(c.name) + '</span>' +
+          '<span class="m-col">' + c.majors.length + ' 个本科专业</span>' +
+          '</button>';
+      }).join('');
+      return '<div class="setup">' +
+        '<div class="kicker">' + cnYear(setup.year) + ' 年，九月</div>' +
+        '<button class="back" data-act="back">← 改档案</button>' +
+        '<h2 class="q">你被录取在</h2>' +
+        '<div class="colleges">' + cards + '</div>' +
+        '</div>';
+    }
+
+    var c = collegeByKey(setup.college);
+    var list = c.majors.map(function (m) {
+      var d = GD.MAJORS[m[0]];
+      var ok = setup.year >= d.since;
+      return '<button class="major' + (setup.major === m[0] ? ' on' : '') + (ok ? '' : ' off') + '"' +
+        (ok ? ' data-act="maj" data-k="' + m[0] + '"' : ' disabled') + '>' +
+        '<span class="m-name">' + esc(d.name) + '</span>' +
+        (d.tag ? '<span class="m-tag">' + esc(d.tag) + '</span>' : '') +
+        '<span class="m-line">' + esc(d.line) + '</span>' +
+        (ok ? '' : '<span class="m-note">' + d.since + ' 年起开设</span>') +
+        '</button>';
+    }).join('');
+    return '<div class="setup">' +
+      '<button class="back" data-act="back">← 换个学院</button>' +
+      '<h2 class="q">' + esc(c.name) + '</h2>' +
+      '<div class="majors">' + list + '</div>' +
+      '<button class="btn primary" data-act="go"' + (setup.major ? '' : ' disabled') + '>' +
+      (setup.major ? '推开校门' : '先选一个专业') + '</button>' +
+      '</div>';
+  }
+
+  function storyView(sc) {
+    var ch = '';
+    var n = sc.choices.length;
+    sc.choices.forEach(function (c, i) {
+      ch += '<button class="choice" data-act="pick" data-i="' + i + '">' + esc(c.t) + '</button>';
+    });
+    return '<div class="scene">' +
+      '<div class="scene-title">' + esc(sc.title || '') + '</div>' +
+      '<div class="prose">' + paras(sc.text) + '</div>' +
+      '<div class="choices ' + (n > 3 ? 'four' : '') + '">' + ch + '</div>' +
+      '</div>';
+  }
+
+  function resultView(sc) {
+    var chips = (sc.diff || []).map(function (d) {
+      var up = d.v > 0;
+      var good = d.k === 'fail' ? false : up;
+      return '<span class="delta ' + (good ? 'up' : 'down') + '">' + d.label + ' ' +
+        (up ? '+' : '') + d.v + '</span>';
+    }).join('');
+    return '<div class="scene">' +
+      '<div class="prose result-text">' + paras(sc.text) + '</div>' +
+      '<div class="deltas">' + chips + '</div>' +
+      '<button class="btn primary" data-act="cont">继续</button>' +
+      '</div>';
+  }
+
+  function deltaChips(list) {
+    return (list || []).map(function (d) {
+      var up = d.v > 0, good = d.k === 'fail' ? false : up;
+      return '<span class="delta ' + (good ? 'up' : 'down') + '">' + d.label + ' ' + (up ? '+' : '') + d.v + '</span>';
+    }).join('');
+  }
+
+  /* ---------- 人物模型 ---------- */
+  function avatarSVG() {
+    var lowE = S.energy < 20, lowM = S.mood < 35;
+    var stroke = lowM ? '#9c3b30' : '#2b2621';
+    var mouth = S.mood >= 65 ? 'M50 62 Q60 70 70 62'
+      : (S.mood >= 35 ? 'M50 64 L70 64' : 'M50 68 Q60 58 70 68');
+    var e = Math.max(0, Math.min(100, S.energy));
+    return '<svg class="avatar" viewBox="0 0 120 160" aria-hidden="true">' +
+      '<circle cx="60" cy="78" r="52" fill="none" stroke="rgba(43,38,33,.07)" stroke-width="1"/>' +
+      '<circle cx="60" cy="78" r="52" fill="none" stroke="' + (lowE ? '#9c3b30' : '#4c6b58') +
+      '" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="' + (e / 100 * 327) + ' 327"' +
+      ' transform="rotate(-90 60 78)" opacity=".55"/>' +
+      '<g fill="none" stroke="' + stroke + '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+      '<ellipse cx="60" cy="50" rx="21" ry="25"/>' +
+      '<path d="M39 44 Q60 22 81 44 Q70 33 60 33 Q50 33 39 44"/>' +
+      '<path d="M49 74 L49 82"/><path d="M71 74 L71 82"/>' +
+      '<path d="M28 140 Q31 100 47 89 Q60 96 73 89 Q89 100 92 140"/>' +
+      '</g>' +
+      '<g fill="' + stroke + '"><circle cx="52" cy="50" r="2.3"/><circle cx="68" cy="50" r="2.3"/></g>' +
+      '<path d="' + mouth + '" fill="none" stroke="' + stroke + '" stroke-width="1.9" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
+  function statLine() {
+    var s = '精神不错';
+    if (S.energy < 15) s = '快不行了';
+    else if (S.energy < 40) s = '撑着呢';
+    else if (S.energy < 70) s = '有点累';
+    return s;
+  }
+
+  function stageInner(sc) {
+    var crumb = '';
+    if (sc.kind === 'hub') crumb = '这个月，你想做点什么？';
+    else if (sc.kind === 'place') crumb = esc(sc.winName);
+    else if (sc.kind === 'item') crumb = esc(sc.winName) + ' › ' + esc(sc.placeName);
+    else if (sc.kind === 'dur') crumb = esc(sc.winName) + ' › ' + esc(sc.placeName) + ' › ' + esc(sc.itemName);
+    else if (sc.kind === 'comp') crumb = '竞赛 · 本月开放 ' + sc.list.length + ' 个';
+    else if (sc.kind === 'effect') crumb = esc(sc.itemName) + (sc.hours ? ' · ' + sc.hours + ' 小时' : '');
+
+    var extra = '';
+
+    return '<div class="g-date">' + esc(sc.title || E.monthLabel(S)) + '</div>' +
+      (sc.line ? '<p class="month-line">' + esc(sc.line) + '</p>' : '') +
+      avatarSVG() +
+      '<div class="g-crumb">' + crumb + '</div>' +
+      extra +
+      '<div class="g-energy"><i style="width:' + Math.round(S.energy) + '%' +
+      (S.energy < 20 ? ';background:#9c3b30' : '') + '"></i></div>' +
+      '<div class="g-state">' + Math.round(S.energy) + ' / 100 · ' + statLine() +
+      (typeof S.slots === 'number' ? ' · 本月剩 ' + S.slots + ' 块' : '') + '</div>';
+  }
+
+  function railInner(sc) {
+    var html = '';
+    if (sc.kind === 'hub') {
+      html = '<button class="rbtn attend' + (sc.attended ? ' done' : '') + '" data-act="attend">' +
+        '<span class="r-ico">🏫</span>' +
+        '<span class="r-txt"><b>' + (sc.attended ? '今天上过课了' : '去上课') + '</b><i>' +
+        (sc.retake ? '重修 · ' : '') + sc.courses.length + ' 门课 · 占 ' + sc.classSlots + ' 块</i></span>' +
+        '</button>' +
+        sc.windows.map(function (w, i) {
+          return '<button class="rbtn" data-act="pick" data-i="' + i + '">' +
+            '<span class="r-ico">' + w.icon + '</span>' +
+            '<span class="r-txt"><b>' + esc(w.name) + '</b><i>' + esc(w.desc) + '</i></span>' +
+            '</button>';
+        }).join('') +
+        (sc.comps ? '<button class="rbtn" data-act="comp">' +
+          '<span class="r-ico">🏆</span><span class="r-txt"><b>竞赛</b><i>本月有 ' +
+          sc.comps + ' 个比赛开放</i></span></button>' : '') +
+        '<button class="rbtn go" data-act="nextmonth"><span class="r-txt"><b>翻到下一页</b>' +
+        '<i>本月还剩 ' + sc.slots + ' 块时间</i></span></button>';
+    } else if (sc.kind === 'place') {
+      html = '<button class="back" data-act="nav">← 回去</button>' +
+        sc.places.map(function (p, i) {
+          return '<button class="rbtn" data-act="pick" data-i="' + i + '">' +
+            '<span class="r-txt"><b>' + esc(p.name) + '</b><i>' + esc(p.note) + '</i></span>' +
+            '</button>';
+        }).join('');
+    } else if (sc.kind === 'item') {
+      html = '<button class="back" data-act="nav">← 回去</button>' +
+        sc.items.map(function (it, i) {
+          var c = it.cost;
+          return '<button class="rbtn" data-act="pick" data-i="' + i + '">' +
+            '<span class="r-txt"><b>' + esc(it.name) + '</b><i>' +
+            (it.pay ? '¥' + (-it.pay) + ' · ' : '') +
+            (it.fix ? '占 ' + it.fix + ' 块 · ' : '') +
+            (c < 0 ? '回 ' + (-c) : '耗 ' + c) + ' 精力</i></span>' +
+            '</button>';
+        }).join('');
+    } else if (sc.kind === 'dur') {
+      html = '<button class="back" data-act="nav">← 回去</button>' +
+        sc.opts.map(function (o, i) {
+          var sign = o.cost < 0 ? '+' : '−';
+          return '<button class="rbtn" data-act="pick" data-i="' + i + '">' +
+            '<span class="r-txt"><b>' + esc(o.label) + '</b><i>' + esc(o.note) +
+            ' · 精力 ' + sign + Math.abs(o.cost) + '</i></span>' +
+            '</button>';
+        }).join('');
+    } else if (sc.kind === 'effect') {
+      html =
+        '<div class="scene-art">' + GD.artFor(sc.winId, sc.placeId, sc.itemId) + '</div>' +
+        '<div class="scene-sum">' + esc(sc.winName) + ' · ' + esc(sc.placeName) + ' · ' +
+          esc(sc.itemName) + (sc.hours ? ' · ' + sc.hours + ' 小时' : '') + '</div>' +
+        '<div class="effect-text">' + paras(sc.text) + '</div>' +
+        '<div class="deltas">' + deltaChips(sc.diff) + '</div>' +
+        '<button class="rbtn go" data-act="cont"><span class="r-txt"><b>继续</b><i>回到这个月</i></span></button>';
+    } else if (sc.kind === 'comp') {
+      html = '<button class="back" data-act="nav">← 回去</button>' +
+        (sc.list.length
+          ? sc.list.map(function (c, i) {
+            return '<button class="rbtn" data-act="pick" data-i="' + i + '">' +
+              '<span class="r-txt"><b>' + esc(c.name) + '</b><i>' + c.levelName + ' · 需' + c.needLabel + ' ' + c.needReq + '（你 ' + c.my + '）' +
+              ' · 精力 ' + c.energy + (c.fee ? ' · ¥' + c.fee : '') + '</i></span>' +
+              '</button>';
+          }).join('')
+          : '<p class="empty">这个月没有开放的比赛。</p>');
+    }
+    if (sc.kind === 'place' || sc.kind === 'item' || sc.kind === 'dur' || sc.kind === 'comp') {
+      html += '<button class="rbtn go skip" data-act="nextmonth">' +
+        '<span class="r-txt"><b>翻到下一页</b><i>这一项不做了，直接过完这个月</i></span></button>';
+    }
+    return html;
+  }
+
+  function gameView(sc) {
+    return '<div class="game"><div class="stage">' + stageInner(sc) + '</div>' +
+      '<div class="rail">' + railInner(sc) + '</div></div>';
+  }
+
+  function summaryView(sc) {
+    var d = sc.data || {};
+    var acts = (d.acts || []).length
+      ? d.acts.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('')
+      : '<li class="none">什么也没做</li>';
+    var lines = (d.lines || []).map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('');
+    return '<div class="scene summary">' +
+      '<div class="sum-tag">第 ' + Math.max(1, (S.month || 2) - 1) + ' 页 · ' + esc(d.month || '') + '</div>' +
+      '<h2 class="sum-title">上一页写完了</h2>' +
+      '<div class="sum-block"><span class="sum-lb">这个月你做了</span><ul class="sum-acts">' + acts + '</ul></div>' +
+      (lines ? '<div class="sum-block"><span class="sum-lb">几句提醒</span><ul class="sum-lines">' + lines + '</ul></div>' : '') +
+      '<div class="sum-stats">绩点 ' + (d.gpa || 0).toFixed(2) + ' · 心情 ' + (d.mood || 0) +
+      ' · 精力 ' + (d.energy || 0) + '</div>' +
+      '<button class="btn primary" data-act="cont">翻到这一页</button>' +
+      '</div>';
+  }
+
+  function vetView(sc) {
+    return '<div class="scene">' +
+      '<div class="scene-title">' + esc(sc.title) + '</div>' +
+      '<div class="prose">' + paras(sc.text) + '</div>' +
+      '<button class="btn primary" data-act="cont">回到学校</button></div>';
+  }
+
+  function remajorView(sc) {
+    var list = sc.list.map(function (o, i) {
+      return '<button class="choice" data-act="pick" data-i="' + i + '">' + esc(o.name) +
+        (o.note ? '  <span class="rm-note">' + esc(o.note) + '</span>' : '') + '</button>';
+    }).join('');
+    return '<div class="scene">' +
+      '<div class="scene-title">' + esc(sc.title) + '</div>' +
+      '<div class="prose"><p>' + esc(sc.text) + '</p></div>' +
+      '<div class="choices">' + list + '</div></div>';
+  }
+
+  function defenseView(sc) {
+    var tone = sc.verdict === '不通过' ? 'bad' : sc.verdict === '优秀' ? 'good' : '';
+    var line = sc.thesis < 40 ? '你上台的时候，PPT 才做到第八页。'
+      : sc.thesis < 70 ? '你讲了十二分钟，老师问了三个问题。'
+      : '你讲了十五分钟，老师只问了一个问题。';
+    return '<div class="scene">' +
+      '<div class="scene-title">毕业论文答辩</div>' +
+      '<div class="prose"><p>' + line + '</p></div>' +
+      '<div class="def-score"><span>答辩成绩</span>' +
+        '<b class="' + tone + '">' + sc.score + '</b>' +
+        '<span class="def-verdict ' + tone + '">' + esc(sc.verdict) + '</span></div>' +
+      '<button class="btn primary" data-act="cont">走下场</button></div>';
+  }
+
+  function examView(sc) {
+    var rows = sc.rows.map(function (r) {
+      return '<div class="ex-row">' +
+        '<span class="ex-name">' + esc(r.name) + '</span>' +
+        '<span class="ex-bar"><i style="width:' + r.score + '%"></i></span>' +
+        '<span class="ex-score">' + r.score + '</span>' +
+        '<span class="ex-grade' + (r.score < 60 ? ' bad' : '') + '">' + esc(r.grade) + '</span></div>';
+    }).join('');
+    return '<div class="scene">' +
+      '<div class="scene-title">期末考试</div>' +
+      '<div class="prose"><p>' + esc(sc.note) + '</p></div>' +
+      '<div class="exam-paper">' + rows + '</div>' +
+      '<p class="ex-rank">平均分 <b>' + sc.avg + '</b> · 班级排名 <b>' + sc.rank + '</b> / ' + sc.total + '</p>' +
+      '<button class="btn primary" data-act="cont">交卷</button></div>';
+  }
+
+  function settleView(sc) {
+    var notes = (sc.notes || []).map(function (n) { return '<p class="warn">' + esc(n) + '</p>'; }).join('');
+    var lines = (sc.lines || []).map(function (n) { return '<p class="note">' + esc(n) + '</p>'; }).join('');
+    return '<div class="scene">' +
+      '<div class="scene-title">' + esc(sc.title) + '</div>' +
+      '<div class="prose">' + paras(sc.text) + '</div>' +
+      notes + lines +
+      '<button class="btn primary" data-act="next">继续</button>' +
+      '</div>';
+  }
+
+  function pickHighlights(list) {
+    if (!list || !list.length) return [];
+    var idx = [];
+    var n = list.length;
+    var slots = Math.min(5, n);
+    for (var i = 0; i < slots; i++) {
+      idx.push(Math.round(i * (n - 1) / Math.max(1, slots - 1)));
+    }
+    var out = [], used = {};
+    idx.forEach(function (i) {
+      if (!used[i] && list[i]) { used[i] = 1; out.push(list[i]); }
+    });
+    return out;
+  }
+
+  function endView(sc) {
+    var en = GD.ENDINGS[sc.key];
+    var m = GD.MAJORS[S.major];
+    var cat = GD.CATS[m.cat];
+    var gy = (S.year || 2022) + 4 + (m.five ? 1 : 0);
+    var dest = (sc.key === 'bigco' || sc.key === 'stable') ? cat[sc.key] : en.dest;
+    var fiveLine = m.five
+      ? '<p class="rom">临床医学是五年制。这张成绩单只写到第四年，你还差一年才毕业。</p>'
+      : '';
+    var romLine = '';
+    if (S.rom >= 4) romLine = '还有一件事没写进这张成绩单：那个人还在。';
+    else if (S.rom >= 3) romLine = '你们约好了异地几年，这件事没写进上面。';
+    var ledgerLine = '';
+    if (S.ledger) {
+      ledgerLine = '<p class="ledger">这四年进出的钱：收入 ¥' + Math.round(S.ledger.in) +
+        ' · 支出 ¥' + Math.round(S.ledger.out) +
+        ' · 最后剩 ¥' + Math.round(S.money) + '</p>';
+    }
+    var body = en.body.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('');
+    var hl = pickHighlights(S.highlights).map(function (h) {
+      var t = String(h.t).replace(/^大[一二三四]([上下]|暑假|寒假)?，?/, '');
+      return '<li><span class="hl-ch">' + E.SEM[h.ch - 1] + '</span>' + esc(t) + '</li>';
+    }).join('');
+    var sc2 = sc.scores || {};
+    var rows = [
+      ['绩点', S.gpa.toFixed(2)], ['英语', S.english], ['技能', S.skill], ['人脉', S.network],
+      ['体魄', S.fitness], ['心情', S.mood], ['履历', S.resume], ['备考', S.prep], ['金钱', '¥' + S.money]
+    ].map(function (r) {
+      return '<span class="chip">' + r[0] + '<b>' + r[1] + '</b></span>';
+    }).join('');
+
+    return '<div class="end">' +
+      '<div class="cert">' +
+      '<div class="cert-head">' + esc(GD.SCHOOL.name) + ' · ' + cnYear(gy) + '届</div>' +
+      '<div class="cert-name">' + esc(S.name) + '</div>' +
+      '<div class="cert-major">' + esc(m.name) + ' · ' + esc(m.college) + '</div>' +
+      '<div class="cert-dest">去向 · ' + esc(dest) + '</div>' +
+      '<div class="seal">' + esc(en.seal) + '</div>' +
+      '</div>' +
+      '<h2 class="end-title">' + esc(en.title) + '</h2>' +
+      '<div class="prose">' + body + '</div>' +
+      fiveLine +
+      ledgerLine +
+      (romLine ? '<p class="rom">' + romLine + '</p>' : '') +
+      '<blockquote class="line">' + esc(en.line) + '</blockquote>' +
+      (hl ? '<div class="review"><h3>四年里，你记得住的几件事</h3><ul>' + hl + '</ul></div>' : '') +
+      '<div class="report">' +
+      '<h3>成绩单</h3><div class="stats">' + rows + '</div>' +
+      '<p class="tiny">考研分 ' + (sc2.kaoyan || 0).toFixed(0) +
+      ' · 考公分 ' + (sc2.kaogong || 0).toFixed(0) +
+      ' · 就业分 ' + (sc2.job || 0).toFixed(0) + '</p>' +
+      '</div>' +
+      '<button class="btn primary" data-act="again">再来一次</button>' +
+      '</div>';
+  }
+
+  /* ---------------- 渲染 ---------------- */
+
+  function seasonOf(s) {
+    var forced = (location.hash.match(/season=(winter|spring|summer|autumn)/) || [])[1];
+    if (forced) return forced;
+    if (!s || !s.month) return 'autumn';
+    var m = E.naturalMonth(s);
+    if (m >= 9 && m <= 11) return 'autumn';
+    if (m === 12 || m <= 2) return 'winter';
+    if (m >= 3 && m <= 5) return 'spring';
+    return 'summer';
+  }
+
+  function draw() {
+    document.body.setAttribute('data-season', seasonOf(S));
+    var sc = S ? S.scene : { kind: 'cover' };
+    var head = '', body = '';
+
+    if (sc.kind === 'cover') {
+      head = '';
+      body = coverView();
+    } else if (sc.kind === 'setup') {
+      body = setupView();
+    } else {
+      if (sc.kind !== 'end') head = hudHTML();
+      if (sc.kind === 'story') body = storyView(sc);
+      else if (sc.kind === 'result') body = resultView(sc);
+      else if (sc.kind === 'summary') body = summaryView(sc);
+      else if (sc.kind === 'settle') body = settleView(sc);
+      else if (sc.kind === 'exam') body = examView(sc);
+      else if (sc.kind === 'defense') body = defenseView(sc);
+      else if (sc.kind === 'vet') body = vetView(sc);
+      else if (sc.kind === 'remajor') body = remajorView(sc);
+      else if (sc.kind === 'end') body = endView(sc);
+      else body = gameView(sc);
+    }
+
+    root.innerHTML = '';
+    root.appendChild(el('<div class="shell"><div class="head"></div><div class="body"></div></div>'));
+    root.querySelector('.head').innerHTML = head;
+    root.querySelector('.body').innerHTML = body;
+    if (sc.kind === 'summary') {
+      var sh = root.querySelector('.shell');
+      if (sh) sh.classList.add('flip');
+    }
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  root.addEventListener('input', function (ev) {
+    var t = ev.target;
+    if (t && t.id === 'allowInput') {
+      var v = parseInt(t.value, 10);
+      if (isNaN(v)) return;
+      setup.allow = v;
+      var h = document.getElementById('allowHint');
+      if (h) {
+        h.textContent = '开局 ¥' + (v * 2) + '，之后每学期家里再打一个月。（' +
+          GD.ALLOW_MIN + '–' + GD.ALLOW_MAX + ' 元，可以自己填）';
+      }
+    }
+  });
+
+  /* ---------- 声音 ---------- */
+  var AC = null, BGM_ON = true, bgmTimer = null, bgmStep = 0;
+
+  function audioCtx() {
+    if (!AC) {
+      try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; }
+    }
+    if (AC && AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+
+  /* 点击音：一个很短的木质“嗒” */
+  function tick() {
+    var c = audioCtx();
+    if (!c) return;
+    var o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(760, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(320, c.currentTime + 0.05);
+    f.type = 'lowpass'; f.frequency.value = 1800;
+    g.gain.setValueAtTime(0.075, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0008, c.currentTime + 0.07);
+    o.connect(f); f.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.08);
+  }
+
+  /* 背景音乐：自制的五声音阶循环，纯 WebAudio 合成，不加载任何音频文件 */
+  /* 四段情绪：大一轻快、大二舒展、大三提速、大四紧绷 */
+  function bgmProfile() {
+    var ch = (S && S.ch) || 1;
+    if (ch <= 2) return { gap: 2100, scale: [0, 2, 4, 7, 9, 12, 9, 4], vol: 0.038, root: 174.6, pulse: 0 };
+    if (ch <= 4) return { gap: 1850, scale: [0, 2, 4, 7, 9, 12, 14, 9], vol: 0.043, root: 164.8, pulse: 0 };
+    if (ch <= 6) return { gap: 1400, scale: [0, 2, 4, 7, 9, 12, 7, 4], vol: 0.049, root: 155.6, pulse: 1 };
+    return { gap: 950, scale: [0, 3, 5, 7, 10, 12, 7, 3], vol: 0.055, root: 146.8, pulse: 2 };
+  }
+  function bgmNote(freq, dur, vol) {
+    var c = audioCtx();
+    if (!c) return;
+    var o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    o2.type = 'sine'; o2.frequency.value = freq * 2.005;
+    g.gain.setValueAtTime(0.0001, c.currentTime);
+    g.gain.linearRampToValueAtTime(vol, c.currentTime + dur * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+    o.connect(g); o2.connect(g); g.connect(c.destination);
+    o.start(); o2.start(); o.stop(c.currentTime + dur); o2.stop(c.currentTime + dur);
+  }
+  function bgmTick() {
+    if (!BGM_ON) { bgmTimer = null; return; }
+    var pr = bgmProfile();
+    var semi = pr.scale[bgmStep % pr.scale.length];
+    var f = pr.root * Math.pow(2, semi / 12);
+    bgmNote(f, pr.gap / 1000 * 1.7, pr.vol);
+    if (bgmStep % 4 === 0) bgmNote(f / 2, pr.gap / 1000 * 2.2, pr.vol * 0.7);
+    if (pr.pulse === 1 && bgmStep % 2 === 0) bgmNote(pr.root * 1.5, 0.28, pr.vol * 0.5);
+    if (pr.pulse === 2) {
+      bgmNote(pr.root * 1.5, 0.2, pr.vol * 0.55);
+      if (bgmStep % 2 === 0) bgmNote(pr.root * 1.335, 0.18, pr.vol * 0.4);
+    }
+    bgmStep++;
+    bgmTimer = setTimeout(bgmTick, pr.gap);
+  }
+  function startBgm() {
+    if (bgmTimer) return;
+    audioCtx();
+    bgmTick();
+  }
+  function stopBgm() {
+    if (bgmTimer) clearTimeout(bgmTimer);
+    bgmTimer = null;
+  }
+
+  function haptic() {
+    if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} }
+  }
+
+  function showConfirm(msg, onYes) {
+    var d = document.createElement('div');
+    d.className = 'mask';
+    d.innerHTML = '<div class="dialog"><p>' + msg + '</p>' +
+      '<div class="dbtns"><button class="dno">再想想</button>' +
+      '<button class="dyes">确认进入</button></div></div>';
+    document.body.appendChild(d);
+    d.querySelector('.dno').onclick = function () { d.remove(); };
+    d.querySelector('.dyes').onclick = function () { d.remove(); onYes(); };
+  }
+
+  root.addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-act]') : null;
+    if (!b) return;
+    tick();
+    haptic();
+    if (!bgmTimer) startBgm();
+    var act = b.getAttribute('data-act');
+
+    if (act === 'new') {
+      setup.step = 0;
+      setup.college = null;
+      setup.major = null;
+      S = { scene: { kind: 'setup' } };
+      draw();
+      setTimeout(function () {
+        var inp = document.getElementById('nameInput');
+        if (inp) inp.focus();
+      }, 30);
+      return;
+    }
+
+    if (act === 'resume') {
+      var loaded = E.load();
+      if (loaded) { S = loaded; draw(); }
+      return;
+    }
+
+    if (act === 'toCollege') {
+      var niT = document.getElementById('nameInput');
+      if (niT) setup.name = niT.value;
+      var ai = document.getElementById('allowInput');
+      if (ai) {
+        var av = parseInt(ai.value, 10);
+        if (!isNaN(av)) setup.allow = Math.max(GD.ALLOW_MIN, Math.min(GD.ALLOW_MAX, av));
+      }
+      setup.step = 1;
+      draw();
+      return;
+    }
+
+    if (act === 'opt') {
+      var group = b.getAttribute('data-group'), val = b.getAttribute('data-v');
+      if (group === 'g') setup.gender = val;
+      else if (group === 'y') setup.year = parseInt(val, 10);
+      else if (group === 'p') setup.prov = val;
+      else if (group === 'a') setup.allow = parseInt(val, 10);
+      var sibs = root.querySelectorAll('[data-group="' + group + '"]');
+      for (var i2 = 0; i2 < sibs.length; i2++) sibs[i2].classList.remove('on');
+      b.classList.add('on');
+      if (group === 'y') {
+        var gh = document.getElementById('gradHint');
+        if (gh) gh.textContent = '你会在 ' + (setup.year + 4) + ' 年 6 月毕业。';
+        var kk = root.querySelector('.kicker');
+        if (kk) kk.textContent = cnYear(setup.year) + ' 年，九月';
+      }
+      if (group === 'p') {
+        var ph = document.getElementById('provHint');
+        if (ph) ph.textContent = provHintText();
+      }
+      return;
+    }
+
+    if (act === 'col') {
+      setup.college = b.getAttribute('data-k');
+      setup.major = null;
+      setup.step = 2;
+      draw();
+      return;
+    }
+
+    if (act === 'maj') {
+      setup.major = b.getAttribute('data-k');
+      draw();
+      return;
+    }
+
+    if (act === 'back') {
+      if (setup.step === 2) { setup.step = 1; setup.major = null; }
+      else { setup.step = 0; setup.college = null; setup.major = null; }
+      draw();
+      return;
+    }
+
+    if (act === 'go') {
+      S = E.newGame({
+        name: setup.name, gender: setup.gender, year: setup.year,
+        prov: setup.prov, allow: setup.allow, major: setup.major
+      });
+      E.beginMonth(S);
+      draw();
+      return;
+    }
+
+    if (act === 'pick') {
+      E.pick(S, parseInt(b.getAttribute('data-i'), 10));
+      draw();
+      return;
+    }
+
+    if (act === 'cont') {
+      E.pick(S, 0);
+      draw();
+      return;
+    }
+
+    if (act === 'next') {
+      E.pick(S, 0);
+      draw();
+      return;
+    }
+
+    if (act === 'nav') {
+      E.navBack(S);
+      draw();
+      return;
+    }
+
+    if (act === 'bgm') {
+      BGM_ON = !BGM_ON;
+      if (BGM_ON) { startBgm(); } else { stopBgm(); }
+      draw();
+      return;
+    }
+
+    if (act === 'attend') {
+      E.attendClass(S);
+      draw();
+      return;
+    }
+
+    if (act === 'comp') {
+      E.compScene(S);
+      draw();
+      return;
+    }
+
+    if (act === 'nextmonth') {
+      if (S.slots > 0) {
+        showConfirm('本月还剩 <b>' + S.slots + '</b> 块时间，' +
+          (S.attended ? '' : '而且今天还没去上课。') + '<br>确定进入下个月吗？',
+          function () { E.endMonth(S); draw(); });
+      } else {
+        E.endMonth(S);
+        draw();
+      }
+      return;
+    }
+
+    if (act === 'again') {
+      E.clear();
+      S = null;
+      draw();
+      return;
+    }
+  });
+
+  window.addEventListener('load', function () {
+    draw();
+  });
+  if (document.readyState && document.readyState !== 'loading') draw();
+
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+</body>
+</html>

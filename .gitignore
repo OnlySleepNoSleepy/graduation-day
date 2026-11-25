@@ -1,0 +1,18 @@
+# 一次性补丁与调试脚本，不入库
+tools/_archive/
+tools/_dbg*.js
+
+# 自动截图产生的临时页面
+tools/_shot_*.html
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 依赖
+node_modules/
+package-lock.json
+
+# 日志
+*.log
