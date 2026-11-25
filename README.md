@@ -4,6 +4,8 @@
 
 **🎮 在线试玩：** https://onlysleepnosleepy.github.io/graduation-day/
 
+![封面](screenshots/01-%E5%B0%81%E9%9D%A2.png)
+
 **📄 单文件版：** [`毕业那天你会去哪.html`](毕业那天你会去哪.html) —— 211 KB，零依赖、零外链、不联网，双击就能玩。
 
 ---
